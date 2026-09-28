@@ -4,31 +4,45 @@ import sys
 import argparse
 from pathlib import Path
 
+
 sys.path.insert(
     0,
     str(Path(__file__).resolve().parent.parent)
 )
+
 from pathlib import Path
 from policy.policy_mapper import (
     semantic_concept,
     dataset_columns_for_concept,
 )
 
+
 BASE = Path(__file__).resolve().parent.parent
 POLICY_FILE = BASE / "policy" / "policy.json"
 OUTPUT_FILE = BASE / "opa" / "generated_policy.rego"
 
+
+# ============================================================
+# LOAD POLICY
+# ============================================================
 
 def load_policy():
     with open(POLICY_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
+# ============================================================
+# EXTRACT RULES
+# ============================================================
+
 def extract_rules(policy):
+
     rules = {}
 
     def walk(value):
+
         if isinstance(value, dict):
+
             rule_id = (
                 value.get("rule_id")
                 or value.get("Rule ID")
@@ -42,14 +56,21 @@ def extract_rules(policy):
                 walk(child)
 
         elif isinstance(value, list):
+
             for child in value:
                 walk(child)
 
     walk(policy)
+
     return rules
 
 
+# ============================================================
+# DESCRIPTION
+# ============================================================
+
 def get_description(rule):
+
     for key in (
         "description",
         "Description",
@@ -57,6 +78,7 @@ def get_description(rule):
         "Sensitive data type",
         "Combination rule",
     ):
+
         value = rule.get(key)
 
         if value:
@@ -65,7 +87,12 @@ def get_description(rule):
     return ""
 
 
+# ============================================================
+# OUTCOME
+# ============================================================
+
 def extract_outcome(rule):
+
     text = str(
         rule.get("Required policy outcome")
         or rule.get("Required outcome")
@@ -89,12 +116,18 @@ def extract_outcome(rule):
     return "FLAG"
 
 
+# ============================================================
+# TEXT NORMALIZATION
+# ============================================================
+
 def normalize_text(value):
+
     value = str(value).lower().strip()
     value = value.replace("_", " ")
     value = value.replace("-", " ")
     value = re.sub(r"[^a-z0-9 ]+", " ", value)
     value = re.sub(r"\s+", " ", value)
+
     return value.strip()
 
 
@@ -103,6 +136,7 @@ def normalize_text(value):
 # ============================================================
 
 CONCEPT_ALIASES = {
+
     "full name": [
         "full name",
         "customer name",
@@ -159,6 +193,9 @@ CONCEPT_ALIASES = {
         "employee id",
         "employee identifier",
         "employee number",
+        "worker id",
+        "worker identifier",
+        "worker number",
     ],
 
     "department": [
@@ -195,6 +232,8 @@ CONCEPT_ALIASES = {
     "free text": [
         "free text",
         "free-text",
+        "free form text",
+        "free-form text",
         "comments",
         "comment",
         "notes",
@@ -204,23 +243,31 @@ CONCEPT_ALIASES = {
     ],
 }
 
+
+# ============================================================
+# RESOLVE CONCEPT FIELDS
+# ============================================================
+
 def resolve_concept_fields(concept, rule_mapping=None):
-    """
-    Resolve policy wording using the policy mapper output.
-    """
 
     concept = str(concept).strip()
 
     semantic = semantic_concept(concept)
 
     if rule_mapping and semantic:
+
         return rule_mapping.get(
             "dataset_columns",
             {}
-        ).get(semantic, [])
+        ).get(
+            semantic,
+            []
+        )
 
     if semantic:
-        return dataset_columns_for_concept(semantic)
+        return dataset_columns_for_concept(
+            semantic
+        )
 
     return []
 
@@ -232,6 +279,7 @@ def resolve_concept_fields(concept, rule_mapping=None):
 def generate_helpers(lines):
 
     lines.extend([
+
         "# ==================================================",
         "# Generic helpers",
         "# ==================================================",
@@ -260,6 +308,10 @@ def generate_helpers(lines):
         "}",
         "",
 
+        # --------------------------------------------------
+        # Regex-based text detection
+        # --------------------------------------------------
+
         "text_matches(fields, patterns) if {",
         "    some i",
         "    some j",
@@ -271,6 +323,32 @@ def generate_helpers(lines):
         "    regex.match(pattern, value)",
         "}",
         "",
+
+        # --------------------------------------------------
+        # Generic record-PII detection
+        # --------------------------------------------------
+
+
+
+        # --------------------------------------------------
+        # Structured identifier detection inside text
+        # --------------------------------------------------
+
+        "contains_record_pii(field) if {",
+        '    value := object.get(input.record, field, "")',
+        '    value != ""',
+
+        "    patterns := [",
+        r'        `(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}`,',
+        r'        `(?i)\b(?:\+44|0)\d{9,10}\b`,',
+        r'        `\b(?:\d[ -]?){13,19}\b`,',
+        r'        `\b[A-Z]{2}\d{6}[A-Z]?\b`,',
+        "    ]",
+
+        "    some i",
+        "    regex.match(patterns[i], value)",
+        "}",
+        "",
     ])
 
 
@@ -278,13 +356,17 @@ def generate_helpers(lines):
 # FIELD CONDITION
 # ============================================================
 
-
-def generate_field_condition(fields, rule_mapping=None):
+def generate_field_condition(
+    fields,
+    rule_mapping=None
+):
 
     resolved = []
 
     for field in fields:
+
         if isinstance(field, str):
+
             resolved.extend(
                 resolve_concept_fields(
                     field,
@@ -292,23 +374,26 @@ def generate_field_condition(fields, rule_mapping=None):
                 )
             )
 
-    resolved = sorted(set(resolved))
+    resolved = sorted(
+        set(resolved)
+    )
 
     if not resolved:
         return "false"
 
-    return f"has_any({json.dumps(resolved)})"
+    return (
+        f"has_any({json.dumps(resolved)})"
+    )
+
 
 # ============================================================
 # COMBINATION DESCRIPTION
 # ============================================================
 
-def split_combination_description(description):
+def split_combination_description(
+    description
+):
 
-    # Remove qualifying text such as:
-    #
-    # "where linkable to a person"
-    #
     description = re.sub(
         r"\s+where\s+.*$",
         "",
@@ -326,6 +411,7 @@ def split_combination_description(description):
         for part in parts
         if part.strip()
     ]
+
 
 def generate_combination_condition(
     description,
@@ -365,9 +451,11 @@ def generate_combination_condition(
                 )
             )
 
-        group = sorted(set(group))
+        group = sorted(
+            set(group)
+        )
 
-        # A required concept has no dataset representation
+        # Required concept has no dataset representation
         if not group:
             return "false"
 
@@ -384,7 +472,10 @@ def generate_combination_condition(
 # TEXT CONDITION
 # ============================================================
 
-def generate_text_condition(rule, rule_mapping=None):
+def generate_text_condition(
+    rule,
+    rule_mapping=None
+):
 
     execution = rule.get(
         "execution",
@@ -409,8 +500,12 @@ def generate_text_condition(rule, rule_mapping=None):
             group = [group]
 
         for field in group:
+
             resolved_fields.extend(
-                resolve_concept_fields(field)
+                resolve_concept_fields(
+                    field,
+                    rule_mapping
+                )
             )
 
     resolved_fields = sorted(
@@ -418,11 +513,22 @@ def generate_text_condition(rule, rule_mapping=None):
     )
 
     if not resolved_fields:
-        return "false"
 
-    return generate_text_condition(
-        rule,
-        rule_mapping
+        # Generic free-text rule.
+        #
+        # CPII-08 uses the dataset's feedback column.
+        #
+        # Detection is performed by the generic
+        # contains_record_pii() helper.
+
+        return 'contains_record_pii("feedback")'
+
+    return (
+        "text_matches("
+        + json.dumps(resolved_fields)
+        + ", "
+        + json.dumps(patterns)
+        + ")"
     )
 
 
@@ -430,7 +536,10 @@ def generate_text_condition(rule, rule_mapping=None):
 # RULE CONDITION
 # ============================================================
 
-def generate_condition(rule, rule_mapping=None):
+def generate_condition(
+    rule,
+    rule_mapping=None
+):
 
     execution = rule.get(
         "execution",
@@ -460,6 +569,7 @@ def generate_condition(rule, rule_mapping=None):
         )
 
         if fields:
+
             groups = []
 
             for group in fields:
@@ -470,6 +580,7 @@ def generate_condition(rule, rule_mapping=None):
                 resolved_group = []
 
                 for field in group:
+
                     resolved_group.extend(
                         resolve_concept_fields(
                             field,
@@ -480,6 +591,13 @@ def generate_condition(rule, rule_mapping=None):
                 groups.append(
                     sorted(set(resolved_group))
                 )
+
+            # A required group has no dataset representation
+            if any(
+                not group
+                for group in groups
+            ):
+                return "false"
 
             return (
                 "all_groups_present("
@@ -498,14 +616,17 @@ def generate_condition(rule, rule_mapping=None):
     if execution_type == "text":
 
         return generate_text_condition(
-            rule
+            rule,
+            rule_mapping
         )
 
     # --------------------------------------------------------
     # Description-based combination
     # --------------------------------------------------------
 
-    description = get_description(rule)
+    description = get_description(
+        rule
+    )
 
     if "+" in description:
 
@@ -541,37 +662,39 @@ def generate_condition(rule, rule_mapping=None):
     # Free-text policy rule
     # --------------------------------------------------------
 
-    normalized_description = normalize_text(description)
+    normalized_description = normalize_text(
+        description
+    )
 
     if (
         "free text" in normalized_description
+        or "free form text" in normalized_description
         or "comments" in normalized_description
+        or "notes" in normalized_description
+        or "feedback" in normalized_description
         or "personal identifiers" in normalized_description
     ):
-        return (
-            "text_matches("
-            + json.dumps(["feedback"])
-            + ", "
-            + json.dumps([
-                r"(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}",
-                r"(?i)\b(?:\+44|0)\d{9,10}\b",
-                r"\b(?:\d[ -]?){13,19}\b",
-                r"\b[A-Z]{2}\d{6}[A-Z]?\b",
-            ])
-            + ")"
-        )
+
+        return 'contains_record_pii("feedback")'
 
     # --------------------------------------------------------
     # No executable representation
     # --------------------------------------------------------
 
     return "false"
-def extract_rule_mapping(mapped_policy, rule_id):
-    """
-    Retrieve mapper output for a specific rule.
-    """
+
+
+# ============================================================
+# EXTRACT RULE MAPPING
+# ============================================================
+
+def extract_rule_mapping(
+    mapped_policy,
+    rule_id
+):
 
     def walk(value):
+
         if isinstance(value, dict):
 
             current_id = (
@@ -581,17 +704,25 @@ def extract_rule_mapping(mapped_policy, rule_id):
             )
 
             if str(current_id) == str(rule_id):
-                return value.get("_mapping", {})
+
+                return value.get(
+                    "_mapping",
+                    {}
+                )
 
             for child in value.values():
+
                 result = walk(child)
+
                 if result is not None:
                     return result
 
         elif isinstance(value, list):
 
             for child in value:
+
                 result = walk(child)
+
                 if result is not None:
                     return result
 
@@ -599,13 +730,19 @@ def extract_rule_mapping(mapped_policy, rule_id):
 
     return walk(mapped_policy) or {}
 
+
 # ============================================================
 # GENERATE REGO
 # ============================================================
 
-def generate(policy, mapped_policy=None):
+def generate(
+    policy,
+    mapped_policy=None
+):
 
-    rules = extract_rules(policy)
+    rules = extract_rules(
+        policy
+    )
 
     lines = [
         "package generated_policy",
@@ -614,7 +751,9 @@ def generate(policy, mapped_policy=None):
         "",
     ]
 
-    generate_helpers(lines)
+    generate_helpers(
+        lines
+    )
 
     lines.extend([
         "# ==================================================",
@@ -630,10 +769,13 @@ def generate(policy, mapped_policy=None):
         safe_id = re.sub(
             r"[^A-Za-z0-9_]",
             "_",
-            rule_id,
+            rule_id
         )
 
-        rule_mapping = extract_rule_mapping(mapped_policy, rule_id)
+        rule_mapping = extract_rule_mapping(
+            mapped_policy,
+            rule_id
+        )
 
         condition = generate_condition(
             rule,
@@ -733,18 +875,15 @@ def generate(policy, mapped_policy=None):
         "# Final decision",
         "# ==================================================",
         "",
-
         'decision := "BLOCK" if {',
         "    has_block",
         "}",
         "",
-
         'decision := "FLAG" if {',
         "    not has_block",
         "    has_flag",
         "}",
         "",
-
         'decision := "EXCEPTION APPROVED" if {',
         "    not has_block",
         "    not has_flag",
@@ -762,7 +901,6 @@ def generate(policy, mapped_policy=None):
         "# Final result",
         "# ==================================================",
         "",
-
         "result := {",
         '    "decision": decision,',
         (
@@ -803,26 +941,44 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open(args.policy, "r", encoding="utf-8") as f:
+    with open(
+        args.policy,
+        "r",
+        encoding="utf-8"
+    ) as f:
+
         policy = json.load(f)
 
     mapped_policy = None
 
     if args.mapped.exists():
-        with open(args.mapped, "r", encoding="utf-8") as f:
+
+        with open(
+            args.mapped,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
             mapped_policy = json.load(f)
 
     generated = generate(
         policy,
-        mapped_policy,
+        mapped_policy
     )
 
     args.output.parent.mkdir(
         parents=True,
-        exist_ok=True,
+        exist_ok=True
     )
 
-    with open(args.output, "w", encoding="utf-8") as f:
+    with open(
+        args.output,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
         f.write(generated)
 
-    print(f"Generated: {args.output}")
+    print(
+        f"Generated: {args.output}"
+    )

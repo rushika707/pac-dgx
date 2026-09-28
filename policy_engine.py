@@ -40,7 +40,41 @@ POLICY_FILE = args.policy
 # ============================================================
 
 policy = load_policy(POLICY_FILE)
+import re
 
+
+def contains_personal_identifier(text, record):
+    if not text:
+        return False
+
+    text = str(text).lower()
+
+    # Check values from mapped PII fields
+    pii_fields = [
+        "customer_name",
+        "email",
+        "phone",
+        "address",
+        "passport_number",
+        "ni_number",
+        "credit_card_number",
+        "bank_account",
+        "employee_id",
+        "customer_id",
+    ]
+
+    for field in pii_fields:
+        value = record.get(field)
+
+        if value is None:
+            continue
+
+        value = str(value).strip()
+
+        if value and value.lower() in text:
+            return True
+
+    return False
 
 # ============================================================
 # GENERIC POLICY EXTRACTION
@@ -642,7 +676,6 @@ def evaluate_description_combination(
 # ============================================================
 # GENERIC TEXT DETECTION
 # ============================================================
-
 def detect_personal_data_in_text(value):
 
     if value is None:
@@ -654,7 +687,6 @@ def detect_personal_data_in_text(value):
         return False
 
     patterns = [
-
         # Email
         r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",
 
@@ -664,27 +696,21 @@ def detect_personal_data_in_text(value):
         # IP address
         r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
 
-        # NI-like identifier
+        # NI number
         r"\b[A-CEGHJ-PR-TW-Z]{2}\s?\d{6}\s?[A-D]\b",
 
-        # Passport-like alphanumeric identifier
+        # Passport
         r"\b[A-Z]{1,2}\d{6,9}\b",
 
-        # Credit/payment-card-like number
+        # Credit/debit card
         r"\b(?:\d[ -]?){13,19}\b",
     ]
 
     for pattern in patterns:
-
-        if re.search(
-            pattern,
-            text,
-            flags=re.IGNORECASE,
-        ):
+        if re.search(pattern, text, flags=re.IGNORECASE):
             return True
 
     return False
-
 
 def evaluate_text_rule(row, rule):
 
@@ -734,9 +760,7 @@ def evaluate_text_rule(row, rule):
         if not has_value(row, column):
             continue
 
-        if detect_personal_data_in_text(
-            row[column]
-        ):
+        if detect_personal_data_in_text(row[column]):
             return True
 
     return False
@@ -836,7 +860,7 @@ def extract_outcome(outcome_text):
     if "PASS" in text:
         return "PASS"
 
-    return None
+    return "FLAG"
 
 def load_policy_for_evaluation(policy_file):
     global policy

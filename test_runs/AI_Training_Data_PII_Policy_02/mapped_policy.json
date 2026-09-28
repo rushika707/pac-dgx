@@ -1,421 +1,917 @@
 {
-  "policies": [
+  "policy_id": null,
+  "policy_name": null,
+  "policy_version": null,
+  "effective_date": null,
+  "rules": [
     {
-      "policy_metadata": {},
-      "purpose": "",
-      "scope": "",
-      "definitions": [],
-      "rules": [
+      "rule_id": "PII-01",
+      "description": "Legal name",
+      "outcome": "Flag record",
+      "mappings": [
         {
-          "rule_id": "PII-01",
-          "description": "Legal name",
-          "examples": [
-            "legal_name",
-            "given_name",
-            "family_name",
-            "preferred_name"
+          "type": "field",
+          "concept_groups": [
+            [
+              "full_name"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [],
-            "dataset_columns": {}
-          }
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ]
+          ]
         },
         {
-          "rule_id": "PII-02",
-          "description": "Private email",
-          "examples": [
-            "private_email",
-            "email",
-            "alternate_email"
+          "type": "field",
+          "concept_groups": [
+            [
+              "full_name"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "full_name"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "full_name"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-02",
+      "description": "Private email",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "email"
-            ],
-            "dataset_columns": {
-              "email": [
-                "email"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "email"
+            ]
+          ]
         },
         {
-          "rule_id": "PII-03",
-          "description": "Contact number",
-          "examples": [
-            "contact_number",
-            "mobile",
-            "telephone"
+          "type": "field",
+          "concept_groups": [
+            [
+              "email"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            [
+              "email"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "email"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "email"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-03",
+      "description": "Contact number",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "phone"
-            ],
-            "dataset_columns": {
-              "phone": [
-                "phone"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "phone"
+            ]
+          ]
         },
         {
-          "rule_id": "PII-04",
-          "description": "Home location",
-          "examples": [
-            "home_address",
-            "apartment",
-            "street",
-            "postal_code"
+          "type": "field",
+          "concept_groups": [
+            [
+              "phone"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "address",
+          "dataset_field_groups": [
+            [
+              "phone"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "phone"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "phone"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-04",
+      "description": "Home location",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "address"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "apartment"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "street"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "postcode"
-            ],
-            "dataset_columns": {
-              "address": [
-                "address"
-              ],
-              "postcode": []
-            }
-          }
-        },
-        {
-          "rule_id": "PII-05",
-          "description": "Taxpayer identification number",
-          "examples": [
-            "tax_id",
-            "taxpayer_number",
-            "tax_reference"
+            ]
           ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-05",
+      "description": "Taxpayer identification number",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "government_id"
-            ],
-            "dataset_columns": {
-              "government_id": []
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "rule_id": "PII-06",
-          "description": "Travel document number",
-          "examples": [
-            "passport_no",
-            "travel_document",
-            "passport_id"
+          "type": "field",
+          "concept_groups": [
+            [
+              "taxpayer_number"
+            ]
           ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "tax_reference"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-06",
+      "description": "Travel document number",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "passport_number"
-            ],
-            "dataset_columns": {
-              "passport_number": [
-                "passport_number"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "passport_number"
+            ]
+          ]
         },
         {
-          "rule_id": "PII-07",
-          "description": "Driver credential number",
-          "examples": [
-            "driver_number",
-            "licence_id",
-            "driving_licence_no"
+          "type": "field",
+          "concept_groups": [
+            [
+              "travel_document"
+            ]
           ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "passport_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "passport_number"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-07",
+      "description": "Driver credential number",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "driver_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "licence_id"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "driving_licence_number"
-            ],
-            "dataset_columns": {
-              "driving_licence_number": []
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-08",
+      "description": "Payment account identifier",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "iban"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "rule_id": "PII-08",
-          "description": "Payment account identifier",
-          "examples": [
-            "iban",
-            "bank_account",
-            "card_number"
+          "type": "field",
+          "concept_groups": [
+            [
+              "bank_account"
+            ]
           ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
-              "bank_account",
+          "dataset_field_groups": [
+            [
+              "bank_account"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "credit_card_number"
-            ],
-            "dataset_columns": {
-              "bank_account": [
-                "bank_account"
-              ],
-              "credit_card_number": [
-                "credit_card_number"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "credit_card_number"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-09",
+      "description": "Linkable digital identifier",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "ip_address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "ip_address"
+            ]
+          ]
         },
         {
-          "rule_id": "PII-09",
-          "description": "Linkable digital identifier",
-          "examples": [
-            "ip_address",
-            "device_id",
-            "session_id",
-            "user_id"
+          "type": "field",
+          "concept_groups": [
+            [
+              "device_id"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "ip_address",
-              "device_id",
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "session_id"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "customer_id"
-            ],
-            "dataset_columns": {
-              "ip_address": [
-                "ip_address"
-              ],
-              "device_id": [],
-              "customer_id": [
-                "customer_id"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "SPII-01",
-          "description": "Health status",
-          "examples": [
-            "health_status",
-            "condition",
-            "clinical_note",
-            "treatment"
+            ]
           ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            [
+              "customer_id"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-01",
+      "description": "Health status",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "medical_condition"
-            ],
-            "dataset_columns": {
-              "medical_condition": [
-                "medical_condition"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "medical_condition"
+            ]
+          ]
         },
         {
-          "rule_id": "SPII-02",
-          "description": "Ethnic background",
-          "examples": [
-            "ethnicity",
-            "ethnic_origin",
-            "ancestry"
+          "type": "field",
+          "concept_groups": [
+            [
+              "condition"
+            ]
           ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "clinical_note"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "medical_condition"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "medical_condition"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-02",
+      "description": "Ethnic background",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "ethnicity"
-            ],
-            "dataset_columns": {
-              "ethnicity": [
-                "ethnicity"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "ethnicity"
+            ]
+          ]
         },
         {
-          "rule_id": "SPII-03",
-          "description": "Faith or religion",
-          "examples": [
-            "religious_belief",
-            "faith",
-            "denomination"
+          "type": "field",
+          "concept_groups": [
+            [
+              "ethnic_origin"
+            ]
           ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "ancestry"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-03",
+      "description": "Faith or religion",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "religion"
-            ],
-            "dataset_columns": {
-              "religion": [
-                "religion"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "religion"
+            ]
+          ]
         },
         {
-          "rule_id": "SPII-04",
-          "description": "Political preference",
-          "examples": [
-            "political_view",
-            "party_preference",
-            "political_affiliation"
+          "type": "field",
+          "concept_groups": [
+            [
+              "faith"
+            ]
           ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "denomination"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-04",
+      "description": "Political preference",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "political_view"
-            ],
-            "dataset_columns": {
-              "political_view": [
-                "political_view"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "political_view"
+            ]
+          ]
         },
         {
-          "rule_id": "SPII-05",
-          "description": "Labour organisation membership",
-          "examples": [
-            "union_member",
-            "union_affiliation",
-            "labour_union"
+          "type": "field",
+          "concept_groups": [
+            [
+              "political_view"
+            ]
           ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [],
-            "dataset_columns": {}
-          }
+          "dataset_field_groups": [
+            [
+              "political_view"
+            ]
+          ]
         },
         {
-          "rule_id": "SPII-06",
-          "description": "Biometric or DNA data",
-          "examples": [
-            "facial_template",
-            "fingerprint",
-            "retina_scan",
-            "dna_data"
+          "type": "field",
+          "concept_groups": [
+            [
+              "political_affiliation"
+            ]
           ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-05",
+      "description": "Labour organisation membership",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "union_member"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "union_affiliation"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "labour_union"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-06",
+      "description": "Biometric or DNA data",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "facial_template"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "biometric"
-            ],
-            "dataset_columns": {
-              "biometric": []
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "rule_id": "CPII-01",
-          "description": "Legal name + date of birth",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
+          "type": "field",
+          "concept_groups": [
+            [
+              "retina_scan"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "dna_data"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-01",
+      "description": "Legal name + date of birth",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "dob"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "dob"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-02",
+      "description": "Legal name + full home location",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "address"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-03",
+      "description": "Legal name + contact number",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "phone"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "phone"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-04",
+      "description": "Legal name + private email",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "email"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "email"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-05",
+      "description": "Date of birth + postal code + gender",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
               "dob"
             ],
-            "dataset_columns": {
-              "dob": [
-                "dob"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CPII-02",
-          "description": "Legal name + full home location",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [],
-            "dataset_columns": {}
-          }
-        },
-        {
-          "rule_id": "CPII-03",
-          "description": "Legal name + contact number",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [],
-            "dataset_columns": {}
-          }
-        },
-        {
-          "rule_id": "CPII-04",
-          "description": "Legal name + private email",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "email"
+            [
+              "postcode"
             ],
-            "dataset_columns": {
-              "email": [
-                "email"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CPII-05",
-          "description": "Date of birth + postal code + gender",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "dob",
-              "postcode",
+            [
               "gender"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "dob"
             ],
-            "dataset_columns": {
-              "dob": [
-                "dob"
-              ],
-              "postcode": [],
-              "gender": [
-                "gender"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CPII-06",
-          "description": "Worker ID + business unit + position where identifiable",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "department",
-              "job_role"
-            ],
-            "dataset_columns": {
-              "department": [
-                "department"
-              ],
-              "job_role": [
-                "job_role"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CPII-07",
-          "description": "Account reference + purchase history allowing re-identification",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [],
-            "dataset_columns": {}
-          }
-        },
-        {
-          "rule_id": "CPII-08",
-          "description": "Free-form text containing personal identifiers",
-          "outcome": "Flag record / Flag record",
-          "_mapping": {
-            "semantic_concepts": [],
-            "dataset_columns": {}
-          }
+            [],
+            [
+              "gender"
+            ]
+          ]
         }
-      ],
-      "requirements": [],
-      "decisions": [],
-      "remediation": [],
-      "evidence": []
+      ]
+    },
+    {
+      "rule_id": "CPII-06",
+      "description": "Worker ID + business unit + position where identifiable",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "employee_id"
+            ],
+            [
+              "department"
+            ],
+            [
+              "job_role"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "employee_id"
+            ],
+            [
+              "department"
+            ],
+            [
+              "job_role"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-07",
+      "description": "Account reference + purchase history allowing re-identification",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "Account reference"
+            ],
+            [
+              "purchase history allowing re-identification"
+            ]
+          ],
+          "dataset_field_groups": [
+            [],
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CPII-08",
+      "description": "Free-form text containing personal identifiers",
+      "outcome": "Flag record / Flag record",
+      "mappings": [
+        {
+          "type": "text",
+          "concept_groups": [
+            [
+              "free_text"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "feedback"
+            ]
+          ]
+        }
+      ]
     }
   ]
 }

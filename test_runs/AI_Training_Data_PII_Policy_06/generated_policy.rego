@@ -37,19 +37,6 @@ text_matches(fields, patterns) if {
     regex.match(pattern, value)
 }
 
-contains_record_pii(field) if {
-    value := object.get(input.record, field, "")
-    value != ""
-    patterns := [
-        `(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}`,
-        `(?i)\b(?:\+44|0)\d{9,10}\b`,
-        `\b(?:\d[ -]?){13,19}\b`,
-        `\b[A-Z]{2}\d{6}[A-Z]?\b`,
-    ]
-    some i
-    regex.match(patterns[i], value)
-}
-
 # ==================================================
 # Rule triggers
 # ==================================================
@@ -83,11 +70,11 @@ trigger_PII_07 if {
 }
 
 trigger_PII_08 if {
-    has_any(["credit_card_number"])
+    has_any(["bank_account", "credit_card_number"])
 }
 
 trigger_PII_09 if {
-    has_any(["ip_address"])
+    has_any(["customer_id", "ip_address"])
 }
 
 trigger_SPII_01 if {
@@ -119,7 +106,7 @@ trigger_CPII_01 if {
 }
 
 trigger_CPII_02 if {
-    all_groups_present([["customer_name"], ["address"]])
+    false
 }
 
 trigger_CPII_03 if {
@@ -127,7 +114,7 @@ trigger_CPII_03 if {
 }
 
 trigger_CPII_04 if {
-    all_groups_present([["customer_name"], ["email"]])
+    false
 }
 
 trigger_CPII_05 if {
@@ -143,7 +130,7 @@ trigger_CPII_07 if {
 }
 
 trigger_CPII_08 if {
-    contains_record_pii("feedback")
+    text_matches(["feedback"], ["(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}", "(?i)\\b(?:\\+44|0)\\d{9,10}\\b", "\\b(?:\\d[ -]?){13,19}\\b", "\\b[A-Z]{2}\\d{6}[A-Z]?\\b"])
 }
 
 # ==================================================
@@ -290,7 +277,7 @@ has_block if {
     trigger_SPII_01
 }
 
-has_block if {
+has_flag if {
     trigger_SPII_02
 }
 
@@ -302,7 +289,7 @@ has_block if {
     trigger_SPII_04
 }
 
-has_block if {
+has_flag if {
     trigger_SPII_05
 }
 

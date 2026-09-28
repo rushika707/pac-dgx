@@ -3,8 +3,14 @@ import re
 
 SEMANTIC_ALIASES = {
     "full_name": [
-        "full name", "customer name", "person name",
-        "client name"
+        "full name",
+        "legal name",
+        "customer name",
+        "person name",
+        "client name",
+        "given name",
+        "family name",
+        "preferred name"
     ],
 
     "dob": [
@@ -22,13 +28,15 @@ SEMANTIC_ALIASES = {
     ],
 
     "address": [
-        "postal address",
-        "postal/home address",
-        "home address",
-        "street address",
-        "residential address",
-        "delivery address"
-    ],
+    "postal address",
+    "postal home address",
+    "home address",
+    "home location",
+    "full home location",
+    "street address",
+    "residential address",
+    "delivery address",
+],
 
     "postcode": [
         "postcode", "postal code", "zip", "zip code"
@@ -149,8 +157,12 @@ SEMANTIC_ALIASES = {
     ],
 
     "employee_id": [
-        "employee id", "employee identifier",
-        "employee number"
+        "employee id",
+        "employee identifier",
+        "employee number",
+        "worker id",
+        "worker identifier",
+        "worker number"
     ],
 
     "department": [
@@ -188,10 +200,24 @@ SEMANTIC_ALIASES = {
     ],
 
     "free_text": [
-        "free text", "free-text", "comment",
-        "comments", "notes", "feedback",
-        "description"
-    ],
+    "free text",
+    "free form text",
+    "free-text",
+    "free-form text",
+    "comments",
+    "notes",
+    "feedback",
+    "personal identifiers"
+],
+
+"phone": [
+    "phone",
+    "phone number",
+    "contact number",
+    "mobile",
+    "mobile number",
+    "telephone"
+],
 }
 
 
@@ -235,16 +261,20 @@ def semantic_concept(text):
             # Generic "address" must not be inferred from
             # phrases such as "email address".
             if concept == "address":
+                address_contexts = [
+                    "postal address",
+                    "postal home address",
+                    "home address",
+                    "home location",
+                    "full home location",
+                    "street address",
+                    "residential address",
+                    "delivery address",
+                ]
+
                 if not any(
                     phrase in normalized
-                    for phrase in [
-                        "postal address",
-                        "postal home address",
-                        "home address",
-                        "street address",
-                        "residential address",
-                        "delivery address",
-                    ]
+                    for phrase in address_contexts
                 ):
                     continue
 
@@ -365,6 +395,7 @@ def map_policy(policy, dataset_columns):
                 continue
 
             concept = semantic_concept(phrase)
+            
 
             if concept:
                 concepts.append(concept)
@@ -416,7 +447,8 @@ def map_policy(policy, dataset_columns):
             or rule.get("Examples")
             or []
         )
-
+        if not examples and description:
+            examples = [description]
         if isinstance(examples, str):
             examples = [examples]
 

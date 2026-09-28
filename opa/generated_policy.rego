@@ -41,91 +41,95 @@ text_matches(fields, patterns) if {
 # Rule triggers
 # ==================================================
 
-trigger_CID_01 if {
-    has_any(["customer_name"])
+trigger_PII_01 if {
+    false
 }
 
-trigger_CID_02 if {
+trigger_PII_02 if {
     has_any(["email"])
 }
 
-trigger_CID_03 if {
+trigger_PII_03 if {
     has_any(["phone"])
 }
 
-trigger_CID_04 if {
+trigger_PII_04 if {
     has_any(["address"])
 }
 
-trigger_CID_05 if {
+trigger_PII_05 if {
     false
 }
 
-trigger_CID_06 if {
+trigger_PII_06 if {
+    has_any(["passport_number"])
+}
+
+trigger_PII_07 if {
     false
 }
 
-trigger_CID_07 if {
+trigger_PII_08 if {
     has_any(["bank_account", "credit_card_number"])
 }
 
-trigger_CID_08 if {
-    has_any(["ip_address"])
+trigger_PII_09 if {
+    has_any(["customer_id", "ip_address"])
 }
 
-trigger_RC_01 if {
-    false
-}
-
-trigger_RC_02 if {
+trigger_SPII_01 if {
     has_any(["medical_condition"])
 }
 
-trigger_RC_03 if {
+trigger_SPII_02 if {
+    has_any(["ethnicity"])
+}
+
+trigger_SPII_03 if {
+    has_any(["religion"])
+}
+
+trigger_SPII_04 if {
+    has_any(["political_view"])
+}
+
+trigger_SPII_05 if {
     false
 }
 
-trigger_RC_04 if {
+trigger_SPII_06 if {
     false
 }
 
-trigger_RC_05 if {
+trigger_CPII_01 if {
     false
 }
 
-trigger_RC_06 if {
+trigger_CPII_02 if {
     false
 }
 
-trigger_CCID_01 if {
-    all_groups_present([["customer_name"], ["dob"]])
-}
-
-trigger_CCID_02 if {
-    all_groups_present([["customer_name"], ["address"]])
-}
-
-trigger_CCID_03 if {
+trigger_CPII_03 if {
     false
 }
 
-trigger_CCID_04 if {
+trigger_CPII_04 if {
     false
 }
 
-trigger_CCID_05 if {
+trigger_CPII_05 if {
     false
 }
 
-trigger_CCID_06 if {
+trigger_CPII_06 if {
     false
 }
 
-trigger_CCID_07 if {
+trigger_CPII_07 if {
     false
 }
 
-trigger_CCID_08 if {
+trigger_CPII_08 if {
     text_matches(["feedback"], ["(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}", "(?i)\\b(?:\\+44|0)\\d{9,10}\\b", "\\b(?:\\d[ -]?){13,19}\\b", "\\b[A-Z]{2}\\d{6}[A-Z]?\\b"])
 }
 
@@ -133,92 +137,96 @@ trigger_CCID_08 if {
 # Triggered rules
 # ==================================================
 
-triggered_rules contains "CID-01" if {
-    trigger_CID_01
+triggered_rules contains "PII-01" if {
+    trigger_PII_01
 }
 
-triggered_rules contains "CID-02" if {
-    trigger_CID_02
+triggered_rules contains "PII-02" if {
+    trigger_PII_02
 }
 
-triggered_rules contains "CID-03" if {
-    trigger_CID_03
+triggered_rules contains "PII-03" if {
+    trigger_PII_03
 }
 
-triggered_rules contains "CID-04" if {
-    trigger_CID_04
+triggered_rules contains "PII-04" if {
+    trigger_PII_04
 }
 
-triggered_rules contains "CID-05" if {
-    trigger_CID_05
+triggered_rules contains "PII-05" if {
+    trigger_PII_05
 }
 
-triggered_rules contains "CID-06" if {
-    trigger_CID_06
+triggered_rules contains "PII-06" if {
+    trigger_PII_06
 }
 
-triggered_rules contains "CID-07" if {
-    trigger_CID_07
+triggered_rules contains "PII-07" if {
+    trigger_PII_07
 }
 
-triggered_rules contains "CID-08" if {
-    trigger_CID_08
+triggered_rules contains "PII-08" if {
+    trigger_PII_08
 }
 
-triggered_rules contains "RC-01" if {
-    trigger_RC_01
+triggered_rules contains "PII-09" if {
+    trigger_PII_09
 }
 
-triggered_rules contains "RC-02" if {
-    trigger_RC_02
+triggered_rules contains "SPII-01" if {
+    trigger_SPII_01
 }
 
-triggered_rules contains "RC-03" if {
-    trigger_RC_03
+triggered_rules contains "SPII-02" if {
+    trigger_SPII_02
 }
 
-triggered_rules contains "RC-04" if {
-    trigger_RC_04
+triggered_rules contains "SPII-03" if {
+    trigger_SPII_03
 }
 
-triggered_rules contains "RC-05" if {
-    trigger_RC_05
+triggered_rules contains "SPII-04" if {
+    trigger_SPII_04
 }
 
-triggered_rules contains "RC-06" if {
-    trigger_RC_06
+triggered_rules contains "SPII-05" if {
+    trigger_SPII_05
 }
 
-triggered_rules contains "CCID-01" if {
-    trigger_CCID_01
+triggered_rules contains "SPII-06" if {
+    trigger_SPII_06
 }
 
-triggered_rules contains "CCID-02" if {
-    trigger_CCID_02
+triggered_rules contains "CPII-01" if {
+    trigger_CPII_01
 }
 
-triggered_rules contains "CCID-03" if {
-    trigger_CCID_03
+triggered_rules contains "CPII-02" if {
+    trigger_CPII_02
 }
 
-triggered_rules contains "CCID-04" if {
-    trigger_CCID_04
+triggered_rules contains "CPII-03" if {
+    trigger_CPII_03
 }
 
-triggered_rules contains "CCID-05" if {
-    trigger_CCID_05
+triggered_rules contains "CPII-04" if {
+    trigger_CPII_04
 }
 
-triggered_rules contains "CCID-06" if {
-    trigger_CCID_06
+triggered_rules contains "CPII-05" if {
+    trigger_CPII_05
 }
 
-triggered_rules contains "CCID-07" if {
-    trigger_CCID_07
+triggered_rules contains "CPII-06" if {
+    trigger_CPII_06
 }
 
-triggered_rules contains "CCID-08" if {
-    trigger_CCID_08
+triggered_rules contains "CPII-07" if {
+    trigger_CPII_07
+}
+
+triggered_rules contains "CPII-08" if {
+    trigger_CPII_08
 }
 
 # ==================================================
@@ -230,91 +238,95 @@ default has_flag := false
 default has_exception := false
 
 has_flag if {
-    trigger_CID_01
+    trigger_PII_01
 }
 
 has_flag if {
-    trigger_CID_02
+    trigger_PII_02
 }
 
 has_flag if {
-    trigger_CID_03
+    trigger_PII_03
 }
 
 has_flag if {
-    trigger_CID_04
+    trigger_PII_04
 }
 
 has_block if {
-    trigger_CID_05
+    trigger_PII_05
 }
 
 has_block if {
-    trigger_CID_06
+    trigger_PII_06
 }
 
 has_block if {
-    trigger_CID_07
-}
-
-has_flag if {
-    trigger_CID_08
+    trigger_PII_07
 }
 
 has_block if {
-    trigger_RC_01
+    trigger_PII_08
+}
+
+has_flag if {
+    trigger_PII_09
 }
 
 has_block if {
-    trigger_RC_02
+    trigger_SPII_01
 }
 
 has_block if {
-    trigger_RC_03
+    trigger_SPII_02
 }
 
 has_block if {
-    trigger_RC_04
+    trigger_SPII_03
 }
 
 has_block if {
-    trigger_RC_05
+    trigger_SPII_04
 }
 
 has_block if {
-    trigger_RC_06
+    trigger_SPII_05
+}
+
+has_block if {
+    trigger_SPII_06
 }
 
 has_flag if {
-    trigger_CCID_01
+    trigger_CPII_01
 }
 
 has_flag if {
-    trigger_CCID_02
+    trigger_CPII_02
 }
 
 has_flag if {
-    trigger_CCID_03
+    trigger_CPII_03
 }
 
 has_flag if {
-    trigger_CCID_04
+    trigger_CPII_04
 }
 
 has_flag if {
-    trigger_CCID_05
+    trigger_CPII_05
 }
 
 has_flag if {
-    trigger_CCID_06
+    trigger_CPII_06
 }
 
 has_flag if {
-    trigger_CCID_07
+    trigger_CPII_07
 }
 
 has_flag if {
-    trigger_CCID_08
+    trigger_CPII_08
 }
 
 # ==================================================

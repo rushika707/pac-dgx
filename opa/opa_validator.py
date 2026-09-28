@@ -5,7 +5,7 @@ from pathlib import Path
 import argparse
 import pandas as pd
 
-
+from policy_engine import check_record
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
@@ -78,6 +78,9 @@ def evaluate(
 
     if output_file:
         OUTPUT_FILE = Path(output_file)
+    if policy_file:
+        from policy_engine import load_policy_for_evaluation
+        load_policy_for_evaluation(policy_file)
 
     mapped_policy = None
 

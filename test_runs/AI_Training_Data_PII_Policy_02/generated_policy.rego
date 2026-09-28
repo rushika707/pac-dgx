@@ -83,11 +83,11 @@ trigger_PII_07 if {
 }
 
 trigger_PII_08 if {
-    has_any(["credit_card_number"])
+    has_any(["bank_account", "credit_card_number"])
 }
 
 trigger_PII_09 if {
-    has_any(["ip_address"])
+    has_any(["customer_id", "ip_address"])
 }
 
 trigger_SPII_01 if {
@@ -135,7 +135,7 @@ trigger_CPII_05 if {
 }
 
 trigger_CPII_06 if {
-    false
+    all_groups_present([["employee_id"], ["department"], ["job_role"]])
 }
 
 trigger_CPII_07 if {

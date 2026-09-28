@@ -16,21 +16,17 @@ def get_connection():
 def init_db():
     conn = get_connection()
     cursor = conn.cursor()
-
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS executions (
+    CREATE TABLE IF NOT EXISTS policies (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        policy_id INTEGER,
-        total_records INTEGER,
-        batch_size INTEGER,
-        total_batches INTEGER,
-        start_record INTEGER,
-        end_record INTEGER,
-        started_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        completed_at TEXT,
-        FOREIGN KEY (policy_id) REFERENCES policies(id)
+        policy_id TEXT UNIQUE,
+        policy_name TEXT,
+        version TEXT,
+        effective_date TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
 """)
+
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS policy_rules (
