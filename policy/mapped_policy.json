@@ -1,585 +1,680 @@
 {
-  "policies": [
+  "policy_id": "AI-CA-DG-001",
+  "policy_name": "AI Customer Analytics Data Governance Policy",
+  "policy_version": null,
+  "effective_date": null,
+  "rules": [
     {
-      "policy_metadata": {
-        "policy_id": "AI-CA-DG-001",
-        "policy_name": "AI Customer Analytics Data Governance Policy",
-        "version": "1.0",
-        "classification": "Internal",
-        "policy_owner": "Customer Analytics & Data Governance",
-        "applies_to": "Customer analytics, segmentation, prediction, experimentation and AI/ML datasets",
-        "review_cycle": "Annual or upon material change to customer data, AI or data governance requirements"
-      },
-      "purpose": "This policy defines mandatory requirements for identifying, classifying, restricting and governing customer data used in artificial intelligence, machine learning, analytics and experimentation activities.",
-      "scope": "This policy applies to customer datasets used for analytics or AI purposes, including raw extracts, curated datasets, feature tables, labelled data, test and validation data, event logs, customer feedback, model inputs and derived datasets.",
-      "definitions": [
+      "rule_id": "CID-01",
+      "description": "Customer name",
+      "outcome": "Flag record",
+      "mappings": [
         {
-          "term": "Customer data",
-          "definition": "Information relating to an identifiable or reasonably identifiable customer."
-        },
-        {
-          "term": "Direct identifier",
-          "definition": "A data item that can identify a customer on its own."
-        },
-        {
-          "term": "Indirect identifier",
-          "definition": "A data item that may identify a customer when combined with other attributes."
-        },
-        {
-          "term": "Restricted data",
-          "definition": "Customer information requiring additional controls because of its sensitivity or potential impact."
-        },
-        {
-          "term": "Analytics dataset",
-          "definition": "Any dataset used to analyse, segment, predict or improve customer-related outcomes."
-        },
-        {
-          "term": "Flagged record",
-          "definition": "A record where one or more policy rules identify restricted or potentially identifying customer information."
-        },
-        {
-          "term": "Remediation",
-          "definition": "Action taken to remove, mask, tokenise, generalise or otherwise reduce the data risk before use."
-        }
-      ],
-      "rules": [
-        {
-          "rule_id": "CID-01",
-          "description": "Customer name",
-          "examples": [
-            "first_name",
-            "last_name",
-            "full_name",
-            "customer_name"
+          "type": "field",
+          "concept_groups": [
+            [
+              "first_name"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "last_name"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "full_name"
-            ],
-            "dataset_columns": {
-              "full_name": [
-                "customer_name"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ]
+          ]
         },
         {
-          "rule_id": "CID-02",
-          "description": "Personal email",
-          "examples": [
-            "email",
-            "personal_email",
-            "contact_email"
+          "type": "field",
+          "concept_groups": [
+            [
+              "full_name"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-02",
+      "description": "Personal email",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "email"
-            ],
-            "dataset_columns": {
-              "email": [
-                "email"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "email"
+            ]
+          ]
         },
         {
-          "rule_id": "CID-03",
-          "description": "Phone number",
-          "examples": [
-            "mobile",
-            "telephone",
-            "phone_number"
+          "type": "field",
+          "concept_groups": [
+            [
+              "email"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
+          "dataset_field_groups": [
+            [
+              "email"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "email"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "email"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-03",
+      "description": "Phone number",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "phone"
-            ],
-            "dataset_columns": {
-              "phone": [
-                "phone"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CID-04",
-          "description": "Home or delivery address",
-          "examples": [
-            "address",
-            "home_address",
-            "delivery_address",
-            "postcode"
+            ]
           ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "address",
-              "postcode"
-            ],
-            "dataset_columns": {
-              "address": [
-                "address"
-              ],
-              "postcode": []
-            }
-          }
+          "dataset_field_groups": [
+            [
+              "phone"
+            ]
+          ]
         },
         {
-          "rule_id": "CID-05",
-          "description": "Government-issued identifier",
-          "examples": [
-            "national_id",
-            "tax_id",
-            "licence_number"
+          "type": "field",
+          "concept_groups": [
+            [
+              "phone"
+            ]
           ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
-              "government_id",
-              "driving_licence_number"
-            ],
-            "dataset_columns": {
-              "government_id": [],
-              "driving_licence_number": []
-            }
-          }
+          "dataset_field_groups": [
+            [
+              "phone"
+            ]
+          ]
         },
         {
-          "rule_id": "CID-06",
-          "description": "Customer account number",
-          "examples": [
-            "account_number",
-            "customer_account_id where externally linkable"
+          "type": "field",
+          "concept_groups": [
+            [
+              "phone"
+            ]
           ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
-              "account_number"
-            ],
-            "dataset_columns": {
-              "account_number": []
-            }
-          }
-        },
+          "dataset_field_groups": [
+            [
+              "phone"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-04",
+      "description": "Home or delivery address",
+      "outcome": "Flag record",
+      "mappings": [
         {
-          "rule_id": "CID-07",
-          "description": "Payment information",
-          "examples": [
-            "bank_account",
-            "card_number",
-            "payment_token where linkable"
-          ],
-          "outcome": "Block until removed or approved",
-          "_mapping": {
-            "semantic_concepts": [
-              "bank_account",
-              "credit_card_number",
-              "payment_information"
-            ],
-            "dataset_columns": {
-              "bank_account": [
-                "bank_account"
-              ],
-              "credit_card_number": [
-                "credit_card_number"
-              ],
-              "payment_information": []
-            }
-          }
-        },
-        {
-          "rule_id": "CID-08",
-          "description": "Online or device identifier",
-          "examples": [
-            "IP_address",
-            "device_id",
-            "cookie_id",
-            "advertising_id"
-          ],
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "ip_address",
-              "device_id",
-              "cookie_id",
-              "advertising_id"
-            ],
-            "dataset_columns": {
-              "ip_address": [
-                "ip_address"
-              ],
-              "device_id": [],
-              "cookie_id": [],
-              "advertising_id": []
-            }
-          }
-        },
-        {
-          "rule_id": "RC-01",
-          "description": "Financial difficulty or vulnerability",
-          "examples": [
-            "arrears_status",
-            "vulnerability_flag",
-            "financial_hardship"
-          ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
-              "financial_difficulty"
-            ],
-            "dataset_columns": {
-              "financial_difficulty": []
-            }
-          }
-        },
-        {
-          "rule_id": "RC-02",
-          "description": "Health-related customer information",
-          "examples": [
-            "medical_support",
-            "health_condition",
-            "disability_information"
-          ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
-              "medical_condition"
-            ],
-            "dataset_columns": {
-              "medical_condition": [
-                "medical_condition"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "RC-03",
-          "description": "Precise location history",
-          "examples": [
-            "gps_trace",
-            "exact_location_history",
-            "precise_coordinates"
-          ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
-              "location_history"
-            ],
-            "dataset_columns": {
-              "location_history": []
-            }
-          }
-        },
-        {
-          "rule_id": "RC-04",
-          "description": "Authentication or security secrets",
-          "examples": [
-            "password",
-            "security_answer",
-            "authentication_secret"
-          ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
-              "authentication_secret"
-            ],
-            "dataset_columns": {
-              "authentication_secret": []
-            }
-          }
-        },
-        {
-          "rule_id": "RC-05",
-          "description": "Fraud investigation information",
-          "examples": [
-            "fraud_case_notes",
-            "investigation_details",
-            "suspicious_activity_notes"
-          ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
-              "fraud_investigation"
-            ],
-            "dataset_columns": {
-              "fraud_investigation": []
-            }
-          }
-        },
-        {
-          "rule_id": "RC-06",
-          "description": "Biometric information",
-          "examples": [
-            "voiceprint",
-            "face_template",
-            "fingerprint_template"
-          ],
-          "outcome": "Block record",
-          "_mapping": {
-            "semantic_concepts": [
-              "biometric"
-            ],
-            "dataset_columns": {
-              "biometric": []
-            }
-          }
-        },
-        {
-          "rule_id": "CCID-01",
-          "description": "Full name + date of birth",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "full_name",
-              "dob"
-            ],
-            "dataset_columns": {
-              "full_name": [
-                "customer_name"
-              ],
-              "dob": [
-                "dob"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CCID-02",
-          "description": "Full name + home address or postcode",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "full_name",
+          "type": "field",
+          "concept_groups": [
+            [
               "address"
-            ],
-            "dataset_columns": {
-              "full_name": [
-                "customer_name"
-              ],
-              "address": [
-                "address"
-              ]
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "rule_id": "CCID-03",
-          "description": "Customer ID + account balance or transaction event",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "customer_id",
-              "account_event_details"
-            ],
-            "dataset_columns": {
-              "customer_id": [
-                "customer_id"
-              ],
-              "account_event_details": []
-            }
-          }
+          "type": "field",
+          "concept_groups": [
+            [
+              "address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "address"
+            ]
+          ]
         },
         {
-          "rule_id": "CCID-04",
-          "description": "Email address + device ID",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "email",
+          "type": "field",
+          "concept_groups": [
+            [
+              "address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "address"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "postcode"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-05",
+      "description": "Government-issued identifier",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "government_id"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "government_id"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "driving_licence_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-06",
+      "description": "Customer account number",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "account_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "account_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-07",
+      "description": "Payment information",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "bank_account"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "bank_account"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "credit_card_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "credit_card_number"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "payment_information"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CID-08",
+      "description": "Online or device identifier",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "ip_address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "ip_address"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
               "device_id"
-            ],
-            "dataset_columns": {
-              "email": [
-                "email"
-              ],
-              "device_id": []
-            }
-          }
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "rule_id": "CCID-05",
-          "description": "Date of birth + postcode + gender",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "dob",
-              "postcode",
-              "gender"
-            ],
-            "dataset_columns": {
-              "dob": [
-                "dob"
-              ],
-              "postcode": [],
-              "gender": [
-                "gender"
-              ]
-            }
-          }
+          "type": "field",
+          "concept_groups": [
+            [
+              "cookie_id"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "rule_id": "CCID-06",
-          "description": "Customer ID + complaint or support case details",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "customer_id",
-              "complaint_support_case"
-            ],
-            "dataset_columns": {
-              "customer_id": [
-                "customer_id"
-              ],
-              "complaint_support_case": []
-            }
-          }
-        },
-        {
-          "rule_id": "CCID-07",
-          "description": "Location history + timestamp + customer identifier",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "location_history",
-              "timestamp",
-              "customer_id"
-            ],
-            "dataset_columns": {
-              "location_history": [],
-              "timestamp": [],
-              "customer_id": [
-                "customer_id"
-              ]
-            }
-          }
-        },
-        {
-          "rule_id": "CCID-08",
-          "description": "Free-text feedback containing customer identifiers or sensitive details",
-          "outcome": "Flag record",
-          "_mapping": {
-            "semantic_concepts": [
-              "customer_id"
-            ],
-            "dataset_columns": {
-              "customer_id": [
-                "customer_id"
-              ]
-            }
-          }
+          "type": "field",
+          "concept_groups": [
+            [
+              "advertising_id"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         }
-      ],
-      "requirements": [
+      ]
+    },
+    {
+      "rule_id": "RC-01",
+      "description": "Financial difficulty or vulnerability",
+      "outcome": "Block record",
+      "mappings": [
         {
-          "requirement": "Pre-use data scan"
+          "type": "field",
+          "concept_groups": [
+            [
+              "financial_difficulty"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "requirement": "Record-level flagging"
+          "type": "field",
+          "concept_groups": [
+            [
+              "financial_difficulty"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "requirement": "Identifier handling"
-        },
-        {
-          "requirement": "Restricted data handling"
-        },
-        {
-          "requirement": "Combination handling"
-        },
-        {
-          "requirement": "Free-text scanning"
-        },
-        {
-          "requirement": "Purpose limitation"
-        },
-        {
-          "requirement": "Approved dataset output"
-        },
-        {
-          "requirement": "Exception handling"
-        },
-        {
-          "requirement": "Audit trail"
+          "type": "field",
+          "concept_groups": [
+            [
+              "financial_difficulty"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         }
-      ],
-      "decisions": [
+      ]
+    },
+    {
+      "rule_id": "RC-02",
+      "description": "Health-related customer information",
+      "outcome": "Block record",
+      "mappings": [
         {
-          "decision": "PASS",
-          "meaning": "No restricted or suspected customer data has been detected.",
-          "action": "Record may be included in the approved analytics dataset."
+          "type": "field",
+          "concept_groups": [
+            [
+              "medical_support"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "decision": "FLAG",
-          "meaning": "Direct or combination-based customer-identifying data has been detected.",
-          "action": "Record must be remediated before general analytics or AI use."
+          "type": "field",
+          "concept_groups": [
+            [
+              "medical_condition"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "medical_condition"
+            ]
+          ]
         },
         {
-          "decision": "BLOCK",
-          "meaning": "Restricted data or a high-risk identifier has been detected.",
-          "action": "Record must be excluded unless an approved exception exists."
-        },
-        {
-          "decision": "EXCEPTION APPROVED",
-          "meaning": "Documented approval permits controlled use of the record.",
-          "action": "Use only under the approved conditions and retain audit evidence."
+          "type": "field",
+          "concept_groups": [
+            [
+              "medical_condition"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "medical_condition"
+            ]
+          ]
         }
-      ],
-      "remediation": [
+      ]
+    },
+    {
+      "rule_id": "RC-03",
+      "description": "Precise location history",
+      "outcome": "Block record",
+      "mappings": [
         {
-          "remediation": "Removal",
-          "expectation": "Delete the customer data field or remove the record where the information is not required."
+          "type": "field",
+          "concept_groups": [
+            [
+              "location_history"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "remediation": "Masking",
-          "expectation": "Replace part of the value while preserving limited analytical utility, where appropriate."
+          "type": "field",
+          "concept_groups": [
+            [
+              "location_history"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "remed,iation": "Tokenisation",
-          "expectation": "Replace a customer identifier with a non-identifying token."
-        },
-        {
-          "remediation": "Generalisation",
-          "expectation": "Reduce precision, such as replacing exact location with region or age with an age band."
-        },
-        {
-          "remediation": "Aggregation",
-          "expectation": "Combine records or values so individual customers cannot reasonably be inferred."
-        },
-        {
-          "remediation": "Anonymisation",
-          "expectation": "Transform data so customers are no longer reasonably identifiable."
+          "type": "field",
+          "concept_groups": [
+            [
+              "location_history"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         }
-      ],
-      "evidence": [
+      ]
+    },
+    {
+      "rule_id": "RC-04",
+      "description": "Authentication or security secrets",
+      "outcome": "Block record",
+      "mappings": [
         {
-          "evidence": "Dataset name",
-          "requirement": "Name and version of the dataset assessed."
+          "type": "field",
+          "concept_groups": [
+            [
+              "authentication_secret"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "evidence": "Scan date",
-          "requirement": "Date when the dataset was scanned."
+          "type": "field",
+          "concept_groups": [
+            [
+              "authentication_secret"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "evidence": "Triggered rule IDs",
-          "requirement": "List of policy rules triggered by each flagged or blocked record."
+          "type": "field",
+          "concept_groups": [
+            [
+              "authentication_secret"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "RC-05",
+      "description": "Fraud investigation information",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "fraud_investigation"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "evidence": "Decision",
-          "requirement": "PASS, FLAG, BLOCK or EXCEPTION APPROVED."
+          "type": "field",
+          "concept_groups": [
+            [
+              "fraud_investigation"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "evidence": "Remediation status",
-          "requirement": "Not required, pending, completed or exception approved."
+          "type": "field",
+          "concept_groups": [
+            [
+              "fraud_investigation"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "RC-06",
+      "description": "Biometric information",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "biometric"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "evidence": "Purpose / use case",
-          "requirement": "Approved analytics or AI purpose for which the dataset is being used."
+          "type": "field",
+          "concept_groups": [
+            [
+              "biometric"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         },
         {
-          "evidence": "Reviewer or approver",
-          "requirement": "Named reviewer or approval reference where required."
+          "type": "field",
+          "concept_groups": [
+            [
+              "biometric"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "CCID-01",
+      "description": "Full name + date of birth",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-02",
+      "description": "Full name + home address or postcode",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-03",
+      "description": "Customer ID + account balance or transaction event",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-04",
+      "description": "Email address + device ID",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-05",
+      "description": "Date of birth + postcode + gender",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-06",
+      "description": "Customer ID + complaint or support case details",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-07",
+      "description": "Location history + timestamp + customer identifier",
+      "outcome": "Flag record",
+      "mappings": []
+    },
+    {
+      "rule_id": "CCID-08",
+      "description": "Free-text feedback containing customer identifiers or sensitive details",
+      "outcome": "Flag record",
+      "mappings": [
+        {
+          "type": "text",
+          "concept_groups": [
+            [
+              "free_text"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "feedback"
+            ]
+          ]
         }
       ]
     }

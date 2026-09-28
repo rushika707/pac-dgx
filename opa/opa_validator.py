@@ -29,7 +29,7 @@ def run_opa(record):
 
     process = subprocess.run(
         [
-            "opa-bin",
+            "opa",
             "eval",
             "-d",
             str(REGO_FILE),

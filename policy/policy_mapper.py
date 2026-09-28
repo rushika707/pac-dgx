@@ -341,99 +341,361 @@ def dataset_columns_for_concept(concept):
 
 def map_policy(policy, dataset_columns):
     """
-    Map policy semantics to the available dataset columns.
-    Does NOT modify the original policy.
+    Convert policy rules into an execution-ready intermediate
+    representation.
+
+    The original policy is not modified.
+
+    Semantics preserved:
+        A + B       -> AND
+        A or B      -> OR
+        direct field -> field
+        free-text   -> text
     """
 
-    mapped_policy = {}
+    def resolve_group(group):
+        concepts = []
+        columns = []
 
-    def walk(value):
-        if isinstance(value, dict):
-            result = {}
+        for phrase in group:
 
-            rule_id = (
-                value.get("rule_id")
-                or value.get("Rule ID")
-                or value.get("ID")
-            )
+            phrase = str(phrase).strip()
 
-            for key, child in value.items():
-                result[key] = walk(child)
+            if not phrase:
+                continue
 
-            if rule_id:
-                description = (
-                    value.get("description")
-                    or value.get("Description")
-                    or value.get("PII type")
-                    or value.get("Sensitive data type")
-                    or value.get("Combination rule")
-                    or value.get("Policy statement")
-                    or ""
+            concept = semantic_concept(phrase)
+
+            if concept:
+                concepts.append(concept)
+
+                resolved_columns = [
+                    column
+                    for column in dataset_columns_for_concept(
+                        concept
+                    )
+                    if column in dataset_columns
+                ]
+
+                columns.extend(resolved_columns)
+
+            else:
+                concepts.append(phrase)
+
+        return (
+            concepts,
+            sorted(set(columns))
+        )
+
+    def build_rule(rule):
+
+        if not isinstance(rule, dict):
+            return rule
+
+        rule_id = (
+            rule.get("rule_id")
+            or rule.get("Rule ID")
+            or rule.get("ID")
+        )
+
+        if not rule_id:
+            return rule
+
+        description = (
+            rule.get("description")
+            or rule.get("Description")
+            or rule.get("PII type")
+            or rule.get("Sensitive data type")
+            or rule.get("Combination rule")
+            or rule.get("Policy statement")
+            or ""
+        )
+
+        examples = (
+            rule.get("examples")
+            or rule.get("Examples")
+            or []
+        )
+
+        if isinstance(examples, str):
+            examples = [examples]
+
+        description_text = str(description)
+
+        normalized_description = normalize(
+            description_text
+        )
+
+        # ----------------------------------------------------
+        # Free-text rule
+        # ----------------------------------------------------
+
+        is_free_text = any(
+            keyword in normalized_description
+            for keyword in [
+                "free text",
+                "free-text",
+                "comments",
+                "notes",
+                "feedback",
+                "personal identifiers"
+            ]
+        )
+
+        if is_free_text:
+
+            feedback_fields = [
+                column
+                for column in dataset_columns_for_concept(
+                    "free_text"
                 )
+                if column in dataset_columns
+            ]
 
-                examples = (
-                    value.get("examples")
-                    or value.get("Examples")
-                    or []
-                )
+            return {
+                "rule_id": rule_id,
+                "description": description_text,
+                "outcome": rule.get(
+                    "outcome",
+                    rule.get("Outcome", "")
+                ),
+                "mappings": [
+                    {
+                        "type": "text",
+                        "concept_groups": [
+                            ["free_text"]
+                        ],
+                        "dataset_field_groups": [
+                            sorted(set(feedback_fields))
+                        ]
+                    }
+                ]
+            }
 
-                if isinstance(examples, str):
-                    examples = [examples]
+        # ----------------------------------------------------
+        # Build semantic groups
+        # ----------------------------------------------------
 
-                concepts = []
+        mappings = []
 
-                # Prefer explicit examples.
-                # For combination rules, parse every component
-                # from the policy description.
+        for example in examples:
 
-                concepts = []
+            example = str(example).strip()
 
-                if examples:
-                    phrases = [str(x) for x in examples]
-                else:
-                    description_text = str(description)
+            if not example:
+                continue
 
-                    phrases = re.split(
+            # -----------------------------------------------
+            # AND
+            # -----------------------------------------------
+
+            if "+" in example:
+
+                parts = [
+                    p.strip()
+                    for p in re.split(
                         r"\s*\+\s*",
-                        description_text,
-                        flags=re.IGNORECASE,
+                        example
+                    )
+                    if p.strip()
+                ]
+
+                concept_groups = []
+                dataset_field_groups = []
+
+                for part in parts:
+
+                    concepts, fields = resolve_group(
+                        [part]
                     )
 
-                for phrase in phrases:
+                    concept_groups.append(
+                        concepts
+                    )
 
-                    phrase = phrase.strip()
+                    dataset_field_groups.append(
+                        fields
+                    )
 
-                    if not phrase:
-                        continue
+                mappings.append({
+                    "type": "combination",
+                    "concept_groups": concept_groups,
+                    "dataset_field_groups":
+                        dataset_field_groups
+                })
 
-                    concept = semantic_concept(phrase)
+            # -----------------------------------------------
+            # OR
+            # -----------------------------------------------
 
-                    if concept and concept not in concepts:
-                        concepts.append(concept)
+            elif re.search(
+                r"\s+or\s+",
+                example,
+                flags=re.IGNORECASE
+            ):
 
-                resolved = {}
+                parts = [
+                    p.strip()
+                    for p in re.split(
+                        r"\s+or\s+",
+                        example,
+                        flags=re.IGNORECASE
+                    )
+                    if p.strip()
+                ]
 
-                for concept in concepts:
-                    columns = dataset_columns_for_concept(concept)
+                concepts, fields = resolve_group(
+                    parts
+                )
 
-                    resolved[concept] = [
-                        column
-                        for column in columns
-                        if column in dataset_columns
+                mappings.append({
+                    "type": "combination",
+                    "concept_groups": [
+                        concepts
+                    ],
+                    "dataset_field_groups": [
+                        fields
                     ]
+                })
 
-                result["_mapping"] = {
-                    "semantic_concepts": concepts,
-                    "dataset_columns": resolved,
-                }
+            # -----------------------------------------------
+            # Direct field
+            # -----------------------------------------------
 
-            return result
+            else:
 
-        if isinstance(value, list):
-            return [walk(item) for item in value]
+                concepts, fields = resolve_group(
+                    [example]
+                )
 
-        return value
+                mappings.append({
+                    "type": "field",
+                    "concept_groups": [
+                        concepts
+                    ],
+                    "dataset_field_groups": [
+                        fields
+                    ]
+                })
 
-    mapped_policy = walk(policy)
+        return {
+            "rule_id": rule_id,
+            "description": description_text,
+            "outcome": rule.get(
+                "outcome",
+                rule.get("Outcome", "")
+            ),
+            "mappings": mappings
+        }
 
-    return mapped_policy
+    # --------------------------------------------------------
+    # Extract policy metadata
+    # --------------------------------------------------------
+
+    if isinstance(policy, dict):
+
+        policies = policy.get(
+            "policies",
+            []
+        )
+
+        if policies:
+
+            source_policy = policies[0]
+
+            metadata = source_policy.get(
+                "policy_metadata",
+                {}
+            )
+
+            rules = source_policy.get(
+                "rules",
+                []
+            )
+
+            return {
+                "policy_id": metadata.get(
+                    "policy_id"
+                ),
+                "policy_name": metadata.get(
+                    "policy_name"
+                ),
+                "policy_version": metadata.get(
+                    "policy_version"
+                ),
+                "effective_date": metadata.get(
+                    "effective_date"
+                ),
+                "rules": [
+                    build_rule(rule)
+                    for rule in rules
+                ]
+            }
+
+    return policy
+if __name__ == "__main__":
+
+    import json
+    from pathlib import Path
+
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    POLICY_FILE = BASE_DIR / "policy" / "policy.json"
+    OUTPUT_FILE = BASE_DIR / "policy" / "mapped_policy.json"
+
+    with open(
+        POLICY_FILE,
+        "r",
+        encoding="utf-8"
+    ) as f:
+        policy = json.load(f)
+
+    # Current synthetic dataset columns
+    dataset_columns = [
+        "record_id",
+        "customer_name",
+        "email",
+        "phone",
+        "address",
+        "dob",
+        "gender",
+        "passport_number",
+        "ni_number",
+        "credit_card_number",
+        "bank_account",
+        "medical_condition",
+        "ethnicity",
+        "religion",
+        "political_view",
+        "employee_id",
+        "department",
+        "job_role",
+        "customer_id",
+        "ip_address",
+        "feedback"
+    ]
+
+    mapped_policy = map_policy(
+        policy,
+        dataset_columns
+    )
+
+    with open(
+        OUTPUT_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+        json.dump(
+            mapped_policy,
+            f,
+            indent=2,
+            ensure_ascii=False
+        )
+
+    print(
+        f"Mapped policy written to: {OUTPUT_FILE}"
+    )
+
+    print(
+        f"Rules mapped: {len(mapped_policy.get('rules', []))}"
+    )
