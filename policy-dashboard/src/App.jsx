@@ -10,7 +10,7 @@ import "./App.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const API = "http://127.0.0.1:8000";
+const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 
 function DatasetEvaluationPage({ onBack }) {

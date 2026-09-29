@@ -24,17 +24,8 @@ INPUT = BASE / "generated_data" / "synthetic_data.xlsx"
 OUTPUT = BASE / "policy-dashboard" / "public" / "policy_results.xlsx"
 DEFAULT_POLICY_FILE = BASE / "policy" / "policy.json"
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--policy",
-    type=Path,
-    default=DEFAULT_POLICY_FILE,
-)
-args = parser.parse_args()
 
-POLICY_FILE = args.policy
-
-
+POLICY_FILE = DEFAULT_POLICY_FILE
 # ============================================================
 # LOAD POLICY
 # ============================================================
@@ -1059,6 +1050,13 @@ def save_evaluations_to_database(
 
     if policy_row:
         db_policy_id = policy_row["id"]
+
+        # Refresh rules from current policy.json
+        cursor.execute(
+            "DELETE FROM policy_rules WHERE policy_id = ?",
+            (db_policy_id,)
+        )
+
     else:
         cursor.execute(
             """
@@ -1075,21 +1073,21 @@ def save_evaluations_to_database(
 
         db_policy_id = cursor.lastrowid
 
-        # Store rules
-        for rule_id, rule in NORMALIZED_RULES.items():
-            cursor.execute(
-                """
-                INSERT INTO policy_rules
-                (policy_id, rule_id, description, outcome)
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    db_policy_id,
-                    rule_id,
-                    rule.get("description", ""),
-                    rule.get("outcome", ""),
-                ),
-            )
+    # Store current policy rules
+    for rule_id, rule in NORMALIZED_RULES.items():
+        cursor.execute(
+            """
+            INSERT INTO policy_rules
+            (policy_id, rule_id, description, outcome)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                db_policy_id,
+                rule_id,
+                rule.get("description", ""),
+                rule.get("outcome", ""),
+            ),
+        )
 
     # --------------------------------------------------------
     # Create execution only when one was not supplied
@@ -1299,6 +1297,14 @@ def evaluate_dataframe(df, mapped_policy=None):
 # ============================================================
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--policy",
+        type=Path,
+        default=DEFAULT_POLICY_FILE,
+    )
+    args = parser.parse_args()
+    
 
     load_policy_for_evaluation(POLICY_FILE)
 
