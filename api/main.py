@@ -15,7 +15,11 @@ from policy_engine import (
 
 BASE = Path(__file__).resolve().parent.parent
 
-DB_PATH = BASE / "data" / "policy.db"
+import os
+
+DB_PATH = Path(
+    os.getenv("DB_PATH", str(BASE / "data" / "policy.db"))
+)
 POLICY_FILE = BASE / "policy" / "policy.json"
 DATASET_FILE = BASE / "generated_data" / "synthetic_data.xlsx"
 
