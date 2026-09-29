@@ -6,7 +6,7 @@ from policy_extractor import extract_policy
 
 BASE = Path(__file__).resolve().parent.parent
 
-PDF_FILE = BASE / "input" / "new_policy.pdf"
+PDF_FILE = BASE / "input" / "policy.pdf"
 OUTPUT_FILE = BASE / "policy" / "policy.json"
 
 

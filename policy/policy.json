@@ -2,50 +2,50 @@
   "policies": [
     {
       "policy_metadata": {
-        "policy_id": "AI-CA-DG-001",
-        "policy_name": "AI Customer Analytics Data Governance Policy",
+        "policy_id": "AI-DP-PII-001",
+        "policy_name": "AI Training Data PII Policy",
         "version": "1.0",
         "classification": "Internal",
-        "policy_owner": "Customer Analytics & Data Governance",
-        "applies_to": "Customer analytics, segmentation, prediction, experimentation and AI/ML datasets",
-        "review_cycle": "Annual or upon material change to customer data, AI or data governance requirements"
+        "policy_owner": "Data Protection Office",
+        "applies_to": "Training, testing, fine-tuning and evaluation datasets used for AI, ML and analytics",
+        "review_cycle": "Annual or upon material change to privacy, AI or data governance requirements"
       },
-      "purpose": "This policy defines mandatory requirements for identifying, classifying, restricting and governing customer data used in artificial intelligence, machine learning, analytics and experimentation activities.",
-      "scope": "This policy applies to customer datasets used for analytics or AI purposes, including raw extracts, curated datasets, feature tables, labelled data, test and validation data, event logs, customer feedback, model inputs and derived datasets.",
+      "purpose": "This policy defines mandatory requirements for identifying, flagging and remediating personal data in datasets used for artificial intelligence, machine learning, model fine-tuning, model evaluation and analytics activities.",
+      "scope": "This policy applies to all datasets that are proposed for AI or machine learning use, including raw data, curated training data, labelled data, test data, validation data, embeddings, logs, prompts, responses and synthetic data derived from personal data.",
       "definitions": [
         {
-          "term": "Customer data",
-          "definition": "Information relating to an identifiable or reasonably identifiable customer."
+          "term": "Personal data / PII",
+          "definition": "Information that identifies, or can reasonably identify, a living individual either directly or in combination with other information."
         },
         {
           "term": "Direct identifier",
-          "definition": "A data item that can identify a customer on its own."
+          "definition": "A data item that can identify an individual on its own."
         },
         {
           "term": "Indirect identifier",
-          "definition": "A data item that may identify a customer when combined with other attributes."
+          "definition": "A data item that may identify an individual when combined with other information."
         },
         {
-          "term": "Restricted data",
-          "definition": "Customer information requiring additional controls because of its sensitivity or potential impact."
+          "term": "Sensitive personal data",
+          "definition": "More sensitive information such as health, ethnicity, religion, political opinion, biometric or genetic information."
         },
         {
-          "term": "Analytics dataset",
-          "definition": "Any dataset used to analyse, segment, predict or improve customer-related outcomes."
+          "term": "Training data",
+          "definition": "Any dataset used to train, fine-tune, evaluate or improve an AI, ML or analytics model."
         },
         {
           "term": "Flagged record",
-          "definition": "A record where one or more policy rules identify restricted or potentially identifying customer information."
+          "definition": "A dataset record where one or more policy rules identify personal data or suspected personal data."
         },
         {
           "term": "Remediation",
-          "definition": "Action taken to remove, mask, tokenise, generalise or otherwise reduce the data risk before use."
+          "definition": "Action taken to remove, mask, tokenise, generalise or anonymise personal data before dataset use."
         }
       ],
       "rules": [
         {
-          "rule_id": "CID-01",
-          "description": "Customer name",
+          "rule_id": "PII-01",
+          "description": "Full name",
           "examples": [
             "first_name",
             "last_name",
@@ -55,8 +55,8 @@
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CID-02",
-          "description": "Personal email",
+          "rule_id": "PII-02",
+          "description": "Personal email address",
           "examples": [
             "email",
             "personal_email",
@@ -65,8 +65,8 @@
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CID-03",
-          "description": "Phone number",
+          "rule_id": "PII-03",
+          "description": "Phone or mobile number",
           "examples": [
             "mobile",
             "telephone",
@@ -75,264 +75,281 @@
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CID-04",
-          "description": "Home or delivery address",
+          "rule_id": "PII-04",
+          "description": "Postal or home address",
           "examples": [
             "address",
             "home_address",
-            "delivery_address",
-            "postcode"
+            "street",
+            "postcode with address"
           ],
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CID-05",
-          "description": "Government-issued identifier",
+          "rule_id": "PII-05",
+          "description": "National Insurance number",
           "examples": [
-            "national_id",
-            "tax_id",
-            "licence_number"
+            "ni_number",
+            "nino"
           ],
           "outcome": "Block until removed or approved"
         },
         {
-          "rule_id": "CID-06",
-          "description": "Customer account number",
+          "rule_id": "PII-06",
+          "description": "Passport number",
           "examples": [
-            "account_number",
-            "customer_account_id where externally linkable"
+            "passport_number"
           ],
           "outcome": "Block until removed or approved"
         },
         {
-          "rule_id": "CID-07",
-          "description": "Payment information",
+          "rule_id": "PII-07",
+          "description": "Driving licence number",
+          "examples": [
+            "driving_licence_number"
+          ],
+          "outcome": "Block until removed or approved"
+        },
+        {
+          "rule_id": "PII-08",
+          "description": "Bank account or payment card number",
           "examples": [
             "bank_account",
-            "card_number",
-            "payment_token where linkable"
+            "sort_code",
+            "credit_card_number"
           ],
           "outcome": "Block until removed or approved"
         },
         {
-          "rule_id": "CID-08",
-          "description": "Online or device identifier",
+          "rule_id": "PII-09",
+          "description": "Online identifier",
           "examples": [
-            "IP_address",
-            "device_id",
-            "cookie_id",
-            "advertising_id"
+            "IP address",
+            "device ID",
+            "cookie ID",
+            "user ID where linkable to a person"
           ],
           "outcome": "Flag record"
         },
         {
-          "rule_id": "RC-01",
-          "description": "Financial difficulty or vulnerability",
+          "rule_id": "SPII-01",
+          "description": "Health or medical information",
           "examples": [
-            "arrears_status",
-            "vulnerability_flag",
-            "financial_hardship"
+            "medical_condition",
+            "diagnosis",
+            "treatment",
+            "disability information"
           ],
           "outcome": "Block record"
         },
         {
-          "rule_id": "RC-02",
-          "description": "Health-related customer information",
+          "rule_id": "SPII-02",
+          "description": "Ethnicity or racial origin",
           "examples": [
-            "medical_support",
-            "health_condition",
-            "disability_information"
+            "ethnicity",
+            "race",
+            "racial_origin"
           ],
           "outcome": "Block record"
         },
         {
-          "rule_id": "RC-03",
-          "description": "Precise location history",
+          "rule_id": "SPII-03",
+          "description": "Religion or belief",
           "examples": [
-            "gps_trace",
-            "exact_location_history",
-            "precise_coordinates"
+            "religion",
+            "belief"
           ],
           "outcome": "Block record"
         },
         {
-          "rule_id": "RC-04",
-          "description": "Authentication or security secrets",
+          "rule_id": "SPII-04",
+          "description": "Political opinion",
           "examples": [
-            "password",
-            "security_answer",
-            "authentication_secret"
+            "political_view",
+            "party_preference"
           ],
           "outcome": "Block record"
         },
         {
-          "rule_id": "RC-05",
-          "description": "Fraud investigation information",
+          "rule_id": "SPII-05",
+          "description": "Trade union membership",
           "examples": [
-            "fraud_case_notes",
-            "investigation_details",
-            "suspicious_activity_notes"
+            "union_member",
+            "trade_union"
           ],
           "outcome": "Block record"
         },
         {
-          "rule_id": "RC-06",
-          "description": "Biometric information",
+          "rule_id": "SPII-06",
+          "description": "Biometric or genetic data",
           "examples": [
-            "voiceprint",
-            "face_template",
-            "fingerprint_template"
+            "faceprint",
+            "fingerprint",
+            "iris_scan",
+            "DNA profile"
           ],
           "outcome": "Block record"
         },
         {
-          "rule_id": "CCID-01",
+          "rule_id": "CPII-01",
           "description": "Full name + date of birth",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-02",
-          "description": "Full name + home address or postcode",
+          "rule_id": "CPII-02",
+          "description": "Full name + postal address or postcode",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-03",
-          "description": "Customer ID + account balance or transaction event",
+          "rule_id": "CPII-03",
+          "description": "Full name + phone number",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-04",
-          "description": "Email address + device ID",
+          "rule_id": "CPII-04",
+          "description": "Full name + personal email address",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-05",
+          "rule_id": "CPII-05",
           "description": "Date of birth + postcode + gender",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-06",
-          "description": "Customer ID + complaint or support case details",
+          "rule_id": "CPII-06",
+          "description": "Employee ID + department + role where linkable to a person",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-07",
-          "description": "Location history + timestamp + customer identifier",
+          "rule_id": "CPII-07",
+          "description": "Customer ID + account event details where the customer can be re-identified",
           "outcome": "Flag record"
         },
         {
-          "rule_id": "CCID-08",
-          "description": "Free-text feedback containing customer identifiers or sensitive details",
+          "rule_id": "CPII-08",
+          "description": "Free-text comments containing personal identifiers",
           "outcome": "Flag record"
         }
       ],
       "requirements": [
         {
-          "requirement": "Pre-use data scan"
+          "requirement_id": "DP-01",
+          "description": "Pre-use scan",
+          "policy_statement": "Training data must be scanned for personal data before it is used for model training, fine-tuning, testing or evaluation."
         },
         {
-          "requirement": "Record-level flagging"
+          "requirement_id": "DP-02",
+          "description": "Record-level flagging",
+          "policy_statement": "Each record containing direct, sensitive or combination-based personal data must be flagged."
         },
         {
-          "requirement": "Identifier handling"
+          "requirement_id": "DP-03",
+          "description": "Direct identifier handling",
+          "policy_statement": "Direct identifiers must be removed, masked, tokenised or replaced before the record is approved for training use."
         },
         {
-          "requirement": "Restricted data handling"
+          "requirement_id": "DP-04",
+          "description": "Sensitive data handling",
+          "policy_statement": "Sensitive personal data must be blocked from training data unless a documented approval and control justification exists."
         },
         {
-          "requirement": "Combination handling"
+          "requirement_id": "DP-05",
+          "description": "Combination rule handling",
+          "policy_statement": "Records matching combination rules must be reviewed and remediated before use."
         },
         {
-          "requirement": "Free-text scanning"
+          "requirement_id": "DP-06",
+          "description": "Free-text scanning",
+          "policy_statement": "Free-text fields such as comments, notes, feedback and descriptions must be scanned for personal data patterns."
         },
         {
-          "requirement": "Purpose limitation"
+          "requirement_id": "DP-07",
+          "description": "Remediation evidence",
+          "policy_statement": "Every remediated record must retain evidence of the remediation method applied."
         },
         {
-          "requirement": "Approved dataset output"
+          "requirement_id": "DP-08",
+          "description": "Approved dataset output",
+          "policy_statement": "Only records with no unresolved personal data findings may be included in the approved training dataset."
         },
         {
-          "requirement": "Exception handling"
+          "requirement_id": "DP-09",
+          "description": "Exception handling",
+          "policy_statement": "Exceptions must be documented, risk-assessed, time-bound and approved by the Data Protection Office or delegated authority."
         },
         {
-          "requirement": "Audit trail"
+          "requirement_id": "DP-10",
+          "description": "Audit trail",
+          "policy_statement": "The scan result, triggered rule, decision, remediation status and approver must be retained for audit purposes."
         }
       ],
       "decisions": [
         {
           "decision": "PASS",
-          "meaning": "No restricted or suspected customer data has been detected.",
-          "action": "Record may be included in the approved analytics dataset."
+          "meaning": "No personal data or suspected personal data has been detected.",
+          "required_action": "Record may be included in the approved training dataset."
         },
         {
           "decision": "FLAG",
-          "meaning": "Direct or combination-based customer-identifying data has been detected.",
-          "action": "Record must be remediated before general analytics or AI use."
+          "meaning": "Direct or combination-based personal data has been detected.",
+          "required_action": "Record must be remediated before training use."
         },
         {
           "decision": "BLOCK",
-          "meaning": "Restricted data or a high-risk identifier has been detected.",
-          "action": "Record must be excluded unless an approved exception exists."
+          "meaning": "Sensitive personal data or high-risk identifier has been detected.",
+          "required_action": "Record must be excluded unless approved exception exists."
         },
         {
           "decision": "EXCEPTION APPROVED",
-          "meaning": "Documented approval permits controlled use of the record.",
-          "action": "Use only under the approved conditions and retain audit evidence."
+          "meaning": "A documented approval allows controlled use of the record.",
+          "required_action": "Use only under the approved conditions and retain audit evidence."
         }
       ],
       "remediation": [
         {
-          "remediation": "Removal",
-          "expectation": "Delete the customer data field or remove the record where the information is not required."
+          "remediation_method": "Removal",
+          "policy_expectation": "Delete the personal data field or remove the record where the field is not required."
         },
         {
-          "remediation": "Masking",
-          "expectation": "Replace part of the value while preserving limited analytical utility, where appropriate."
+          "remediation_method": "Masking",
+          "policy_expectation": "Replace part of the value while preserving limited analytical utility, where appropriate."
         },
         {
-          "remed,iation": "Tokenisation",
-          "expectation": "Replace a customer identifier with a non-identifying token."
+          "remediation_method": "Tokenisation",
+          "policy_expectation": "Replace the identifier with a non-identifying token."
         },
         {
-          "remediation": "Generalisation",
-          "expectation": "Reduce precision, such as replacing exact location with region or age with an age band."
+          "remediation_method": "Generalisation",
+          "policy_expectation": "Reduce precision, such as replacing exact date of birth with age band."
         },
         {
-          "remediation": "Aggregation",
-          "expectation": "Combine records or values so individual customers cannot reasonably be inferred."
-        },
-        {
-          "remediation": "Anonymisation",
-          "expectation": "Transform data so customers are no longer reasonably identifiable."
+          "remediation_method": "Anonymisation",
+          "policy_expectation": "Transform data so individuals are no longer reasonably identifiable."
         }
       ],
       "evidence": [
         {
-          "evidence": "Dataset name",
+          "evidence_item": "Dataset name",
           "requirement": "Name and version of the dataset assessed."
         },
         {
-          "evidence": "Scan date",
+          "evidence_item": "Scan date",
           "requirement": "Date when the dataset was scanned."
         },
         {
-          "evidence": "Triggered rule IDs",
-          "requirement": "List of policy rules triggered by each flagged or blocked record."
+          "evidence_item": "Triggered rule IDs",
+          "requirement": "List of policy rules triggered by each flagged record."
         },
         {
-          "evidence": "Decision",
+          "evidence_item": "Decision",
           "requirement": "PASS, FLAG, BLOCK or EXCEPTION APPROVED."
         },
         {
-          "evidence": "Remediation status",
+          "evidence_item": "Remediation status",
           "requirement": "Not required, pending, completed or exception approved."
         },
         {
-          "evidence": "Purpose / use case",
-          "requirement": "Approved analytics or AI purpose for which the dataset is being used."
-        },
-        {
-          "evidence": "Reviewer or approver",
+          "evidence_item": "Reviewer or approver",
           "requirement": "Named reviewer or approval reference where required."
         }
       ]

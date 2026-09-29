@@ -10,7 +10,7 @@ import "./App.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const API = "http://127.0.0.1:8001";
+const API = "http://127.0.0.1:8000";
 
 
 function DatasetEvaluationPage({ onBack }) {
@@ -177,6 +177,7 @@ function App() {
   const [executions, setExecutions] = useState([]);
   const [policyRules, setPolicyRules] = useState([]);
   const [definitions, setDefinitions] = useState(null);
+  const [pipelineStatus, setPipelineStatus] = useState(null);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -190,80 +191,132 @@ function App() {
   }, []);
 
   const loadData = async (executionId = null) => {
-    try {
-      setLoading(true);
-      setError("");
 
-      const evaluationsUrl = executionId
-        ? `${API}/api/evaluations?execution_id=${executionId}`
+  try {
+
+    setLoading(true);
+    setError("");
+
+    const executionsResponse =
+      await fetch(
+        `${API}/api/executions`
+      );
+
+    if (!executionsResponse.ok) {
+      throw new Error(
+        "Could not load execution history"
+      );
+    }
+
+    const executionsData =
+      await executionsResponse.json();
+
+    /*
+     * Use the exact same execution
+     * that the dashboard uses.
+     */
+    const activeExecutionId =
+      executionId ||
+      executionsData[0]?.id ||
+      null;
+
+    const evaluationsUrl =
+      activeExecutionId
+        ? `${API}/api/evaluations?execution_id=${activeExecutionId}`
         : `${API}/api/evaluations`;
 
-      const [
-        evaluationsResponse,
-        executionsResponse,
-        rulesResponse,
-        definitionsResponse,
-      ] = await Promise.all([
-        fetch(evaluationsUrl),
-        fetch(`${API}/api/executions`),
-        fetch(`${API}/api/rules`),
-        fetch(`${API}/api/policy/definitions`),
-      ]);
+    const pipelineUrl =
+      activeExecutionId
+        ? `${API}/api/pipeline-status?execution_id=${activeExecutionId}`
+        : `${API}/api/pipeline-status`;
 
-      if (!evaluationsResponse.ok) {
-        throw new Error(
-          "Could not load evaluations from API"
-        );
-      }
 
-      if (!executionsResponse.ok) {
-        throw new Error(
-          "Could not load execution history"
-        );
-      }
+    const [
+      evaluationsResponse,
+      rulesResponse,
+      definitionsResponse,
+      pipelineResponse,
+    ] = await Promise.all([
 
-      if (!rulesResponse.ok) {
-        throw new Error(
-          "Could not load policy rules"
-        );
-      }
+      fetch(evaluationsUrl),
 
-      if (!definitionsResponse.ok) {
-        throw new Error(
-          "Could not load policy definitions"
-        );
-      }
+      fetch(
+        `${API}/api/rules`
+      ),
 
-      const evaluations =
-        await evaluationsResponse.json();
+      fetch(
+        `${API}/api/policy/definitions`
+      ),
 
-      const executionsData =
-        await executionsResponse.json();
+      fetch(pipelineUrl),
+    ]);
 
-      const rulesData =
-        await rulesResponse.json();
 
-      const definitionsData =
-        await definitionsResponse.json();
+    if (!evaluationsResponse.ok) {
 
-      /*
-       * Keep the original API decision.
-       * expected_outcome is only kept for compatibility
-       * with the existing UI.
-       */
-      const formatted = evaluations.map((row) => ({
+      throw new Error(
+        "Could not load evaluations from API"
+      );
+
+    }
+
+    if (!rulesResponse.ok) {
+
+      throw new Error(
+        "Could not load policy rules"
+      );
+
+    }
+
+    if (!definitionsResponse.ok) {
+
+      throw new Error(
+        "Could not load policy definitions"
+      );
+
+    }
+
+    if (!pipelineResponse.ok) {
+
+      throw new Error(
+        "Could not load pipeline status"
+      );
+
+    }
+
+
+    const evaluations =
+      await evaluationsResponse.json();
+
+    const rulesData =
+      await rulesResponse.json();
+
+    const definitionsData =
+      await definitionsResponse.json();
+
+    const pipelineData =
+      await pipelineResponse.json();
+
+
+    const formatted =
+      evaluations.map((row) => ({
+
         ...row,
 
-        record_id: row.record_id,
+        record_id:
+          row.record_id,
 
         decision: String(
-          row.decision ?? row.expected_outcome ?? ""
+          row.decision ??
+          row.expected_outcome ??
+          ""
         )
           .trim()
           .toUpperCase(),
 
         expected_outcome: String(
-          row.decision || ""
+          row.decision ??
+          ""
         )
           .trim()
           .toUpperCase(),
@@ -278,43 +331,59 @@ function App() {
           row.remediation || "",
       }));
 
-      setDf(formatted);
-      setExecutions(executionsData);
-      setPolicyRules(rulesData);
-      setDefinitions(definitionsData);
 
-      const activeExecutionId =
-        executionId ||
-        executionsData[0]?.id ||
-        null;
+    setDf(formatted);
 
-      setSelectedExecutionId(
-        activeExecutionId
+    setExecutions(
+      executionsData
+    );
+
+    setPolicyRules(
+      rulesData
+    );
+
+    setDefinitions(
+      definitionsData
+    );
+
+    setPipelineStatus(
+      pipelineData
+    );
+
+
+    if (formatted.length > 0) {
+
+      setSelectedId(
+        formatted[0].record_id
       );
 
-      if (formatted.length > 0) {
-        setSelectedId(
-          formatted[0].record_id
-        );
-
-        loadSelectedRecord(
-          formatted[0].record_id,
-          activeExecutionId
-        );
-      } else {
-        setSelectedId(null);
-        setSelectedDetails(null);
-      }
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        `${err.message}. Make sure the FastAPI backend is running.`
+      loadSelectedRecord(
+        formatted[0].record_id
       );
-    } finally {
-      setLoading(false);
+
     }
-  };
+
+
+    setSelectedExecutionId(
+      activeExecutionId
+    );
+
+
+  } catch (err) {
+
+    console.error(err);
+
+    setError(
+      `${err.message}. Make sure the FastAPI backend is running.`
+    );
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
+
 
   /* =========================================================
      SELECTED RECORD
@@ -990,7 +1059,235 @@ function App() {
 
       </section>
 
+      <section className="pipeline-validation">
 
+  <div className="pipeline-validation-header">
+
+    <div>
+
+      <span className="section-eyebrow">
+        PIPELINE VALIDATION
+      </span>
+
+      <h2>
+        Policy-as-Code Pipeline
+      </h2>
+
+      <p>
+        End-to-end validation of policy processing and evaluation.
+      </p>
+
+    </div>
+
+    <div
+      className={
+        `pipeline-complete ${
+          pipelineStatus?.summary?.completed_layers ===
+          pipelineStatus?.summary?.pipeline_layers
+            ? "pipeline-complete-success"
+            : "pipeline-complete-warning"
+        }`
+      }
+    >
+
+      {pipelineStatus
+        ? `${pipelineStatus.summary.completed_layers}/${pipelineStatus.summary.pipeline_layers} LAYERS PASSED`
+        : "LOADING..."}
+
+    </div>
+
+  </div>
+
+
+  <div className="pipeline-layers">
+
+    {[
+      [
+        "pdf_extraction",
+        "PDF Extraction"
+      ],
+
+      [
+        "policy_json_generation",
+        "Policy JSON Generation"
+      ],
+
+      [
+        "policy_mapping",
+        "Generic Policy Mapping"
+      ],
+
+      [
+        "rego_generation",
+        "Rego Generation"
+      ],
+
+      [
+        "python_policy_evaluation",
+        "Python Policy Evaluation"
+      ],
+
+      [
+        "opa_evaluation",
+        "OPA Policy Evaluation"
+      ],
+
+      [
+        "dataset",
+        "Dataset Validation"
+      ],
+    ].map(
+      ([key, label], index) => {
+
+        const layer =
+          pipelineStatus?.pipeline?.[key];
+
+        const passed =
+          layer?.status === "PASSED";
+
+        const status =
+          layer?.status || "LOADING";
+
+        const detail =
+          layer?.detail || "Waiting...";
+
+        return (
+
+          <div
+            className={
+              `pipeline-layer ${
+                passed
+                  ? "pipeline-passed"
+                  : "pipeline-failed"
+              }`
+            }
+            key={key}
+          >
+
+            <div className="pipeline-layer-number">
+              {index + 1}
+            </div>
+
+
+            <div className="pipeline-layer-info">
+
+              <strong>
+                {label}
+              </strong>
+
+              <span>
+                {status}
+              </span>
+
+              <small>
+                {detail}
+              </small>
+
+            </div>
+
+
+            <div className="pipeline-layer-status">
+
+              {passed
+                ? "✓"
+                : "!"}
+
+            </div>
+
+          </div>
+
+        );
+
+      }
+    )}
+
+  </div>
+
+
+  <div className="pipeline-metrics">
+
+    <div>
+
+      <span>
+        RECORDS EVALUATED
+      </span>
+
+      <strong>
+        {
+          pipelineStatus?.execution
+            ?.records_evaluated ?? 0
+        }
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>
+        EXECUTION ID
+      </span>
+
+      <strong>
+        {pipelineStatus?.execution?.execution_id
+          ? `#${pipelineStatus.execution.execution_id}`
+          : "—"}
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>
+        DECISION MISMATCHES
+      </span>
+
+      <strong>
+        {
+          pipelineStatus?.validation
+            ?.decision_mismatches ?? 0
+        }
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>
+        RULE MISMATCHES
+      </span>
+
+      <strong>
+        {
+          pipelineStatus?.validation
+            ?.rule_mismatches ?? 0
+        }
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>
+        VALIDATION FAILURES
+      </span>
+
+      <strong>
+        {
+          pipelineStatus?.validation
+            ?.validation_failures ?? 0
+        }
+      </strong>
+
+    </div>
+
+  </div>
+
+
+</section>
       {/* =====================================================
           SUMMARY + CHART
       ===================================================== */}

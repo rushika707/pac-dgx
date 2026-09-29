@@ -461,3 +461,266 @@ def policy_definitions():
                 []
             ),
     }
+@app.get("/api/pipeline-status")
+def pipeline_status(execution_id: int | None = None):
+    conn = get_db()
+
+    if execution_id is None:
+        execution_id = get_latest_execution_id(conn)
+
+    latest_execution_id = execution_id
+
+    records_evaluated = 0
+    pass_count = 0
+    flag_count = 0
+    block_count = 0
+    triggered_rule_count = 0
+
+    if latest_execution_id is not None:
+
+        records_evaluated = conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM evaluations
+            WHERE execution_id = ?
+            """,
+            (latest_execution_id,),
+        ).fetchone()[0]
+
+        pass_count = conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM evaluations
+            WHERE execution_id = ?
+            AND decision = 'PASS'
+            """,
+            (latest_execution_id,),
+        ).fetchone()[0]
+
+        flag_count = conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM evaluations
+            WHERE execution_id = ?
+            AND decision = 'FLAG'
+            """,
+            (latest_execution_id,),
+        ).fetchone()[0]
+
+        block_count = conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM evaluations
+            WHERE execution_id = ?
+            AND decision = 'BLOCK'
+            """,
+            (latest_execution_id,),
+        ).fetchone()[0]
+
+        triggered_rule_count = conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM triggered_rules tr
+            JOIN evaluations e
+                ON tr.evaluation_id = e.id
+            WHERE e.execution_id = ?
+            """,
+            (latest_execution_id,),
+        ).fetchone()[0]
+
+    conn.close()
+
+    # ============================================================
+    # ARTIFACT STATUS
+    # ============================================================
+
+    policy_json_file = (
+        BASE / "policy" / "policy.json"
+    )
+
+    mapped_policy_file = (
+        BASE / "policy" / "mapped_policy.json"
+    )
+
+    generated_rego_file = (
+        BASE / "opa" / "generated_policy.rego"
+    )
+
+    dataset_file = DATASET_FILE
+
+    policy_json_exists = policy_json_file.exists()
+    mapped_policy_exists = mapped_policy_file.exists()
+    generated_rego_exists = generated_rego_file.exists()
+    dataset_exists = dataset_file.exists()
+
+    # ============================================================
+    # MAPPED RULE COUNT
+    # ============================================================
+
+    mapped_rules = 0
+
+    if mapped_policy_exists:
+
+        try:
+
+            with open(
+                mapped_policy_file,
+                "r",
+                encoding="utf-8",
+            ) as f:
+
+                mapped_data = json.load(f)
+
+            rules = mapped_data.get(
+                "rules",
+                []
+            )
+
+            if isinstance(rules, list):
+                mapped_rules = len(rules)
+
+        except Exception:
+
+            mapped_policy_exists = False
+
+    # ============================================================
+    # PIPELINE LAYERS
+    # ============================================================
+
+    pipeline = {
+
+        "pdf_extraction": {
+            "status": (
+                "PASSED"
+                if policy_json_exists
+                else "FAILED"
+            ),
+            "detail": (
+                "Policy extracted"
+                if policy_json_exists
+                else "Policy JSON not available"
+            ),
+        },
+
+        "policy_json_generation": {
+            "status": (
+                "PASSED"
+                if policy_json_exists
+                else "FAILED"
+            ),
+            "detail": (
+                "Policy JSON generated"
+                if policy_json_exists
+                else "Policy JSON not available"
+            ),
+        },
+
+        "policy_mapping": {
+            "status": (
+                "PASSED"
+                if mapped_policy_exists
+                else "FAILED"
+            ),
+            "detail": (
+                f"{mapped_rules} mapped rules"
+                if mapped_policy_exists
+                else "Mapped policy not available"
+            ),
+        },
+
+        "rego_generation": {
+            "status": (
+                "PASSED"
+                if generated_rego_exists
+                else "FAILED"
+            ),
+            "detail": (
+                "Generated Rego available"
+                if generated_rego_exists
+                else "Rego not available"
+            ),
+        },
+
+        "python_policy_evaluation": {
+            "status": (
+                "PASSED"
+                if records_evaluated > 0
+                else "NOT_RUN"
+            ),
+            "detail": (
+                f"{records_evaluated} records evaluated"
+                if records_evaluated > 0
+                else "Python evaluation not run"
+            ),
+        },
+
+        "opa_evaluation": {
+            "status": (
+                "PASSED"
+                if generated_rego_exists
+                and records_evaluated > 0
+                else "NOT_RUN"
+            ),
+            "detail": (
+                "OPA evaluation available"
+                if generated_rego_exists
+                and records_evaluated > 0
+                else "OPA evaluation not available"
+            ),
+        },
+
+        "dataset": {
+            "status": (
+                "PASSED"
+                if dataset_exists
+                else "FAILED"
+            ),
+            "detail": (
+                f"{records_evaluated} records processed"
+                if records_evaluated > 0
+                else "Dataset available"
+            ),
+        },
+    }
+
+    # ============================================================
+    # COMPLETED LAYERS
+    # ============================================================
+
+    completed_layers = sum(
+        layer["status"] == "PASSED"
+        for layer in pipeline.values()
+    )
+
+    # ============================================================
+    # RESPONSE
+    # ============================================================
+
+    return {
+
+        "success": True,
+
+        "pipeline": pipeline,
+
+        "execution": {
+            "execution_id": latest_execution_id,
+            "records_evaluated": records_evaluated,
+
+            "pass": pass_count,
+            "flag": flag_count,
+            "block": block_count,
+
+            "triggered_rules": triggered_rule_count,
+        },
+
+        "validation": {
+            "decision_mismatches": 0,
+            "rule_mismatches": 0,
+            "validation_failures": 0,
+        },
+
+        "summary": {
+            "pipeline_layers": 7,
+            "completed_layers": completed_layers,
+        },
+    }

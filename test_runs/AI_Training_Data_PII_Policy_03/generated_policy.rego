@@ -37,6 +37,19 @@ text_matches(fields, patterns) if {
     regex.match(pattern, value)
 }
 
+contains_record_pii(field) if {
+    value := object.get(input.record, field, "")
+    value != ""
+    patterns := [
+        `(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}`,
+        `(?i)\b(?:\+44|0)\d{9,10}\b`,
+        `\b(?:\d[ -]?){13,19}\b`,
+        `\b[A-Z]{2}\d{6}[A-Z]?\b`,
+    ]
+    some i
+    regex.match(patterns[i], value)
+}
+
 # ==================================================
 # Rule triggers
 # ==================================================
@@ -130,7 +143,7 @@ trigger_CPII_07 if {
 }
 
 trigger_CPII_08 if {
-    text_matches(["feedback"], ["(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}", "(?i)\\b(?:\\+44|0)\\d{9,10}\\b", "\\b(?:\\d[ -]?){13,19}\\b", "\\b[A-Z]{2}\\d{6}[A-Z]?\\b"])
+    contains_record_pii("feedback")
 }
 
 # ==================================================

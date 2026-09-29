@@ -1,12 +1,12 @@
 {
-  "policy_id": "AI-CA-DG-001",
-  "policy_name": "AI Customer Analytics Data Governance Policy",
+  "policy_id": "AI-DP-PII-001",
+  "policy_name": "AI Training Data PII Policy",
   "policy_version": null,
   "effective_date": null,
   "rules": [
     {
-      "rule_id": "CID-01",
-      "description": "Customer name",
+      "rule_id": "PII-01",
+      "description": "Full name",
       "outcome": "Flag record",
       "mappings": [
         {
@@ -60,8 +60,8 @@
       ]
     },
     {
-      "rule_id": "CID-02",
-      "description": "Personal email",
+      "rule_id": "PII-02",
+      "description": "Personal email address",
       "outcome": "Flag record",
       "mappings": [
         {
@@ -106,8 +106,8 @@
       ]
     },
     {
-      "rule_id": "CID-03",
-      "description": "Phone number",
+      "rule_id": "PII-03",
+      "description": "Phone or mobile number",
       "outcome": "Flag record",
       "mappings": [
         {
@@ -152,8 +152,8 @@
       ]
     },
     {
-      "rule_id": "CID-04",
-      "description": "Home or delivery address",
+      "rule_id": "PII-04",
+      "description": "Postal or home address",
       "outcome": "Flag record",
       "mappings": [
         {
@@ -184,13 +184,11 @@
           "type": "field",
           "concept_groups": [
             [
-              "address"
+              "street"
             ]
           ],
           "dataset_field_groups": [
-            [
-              "address"
-            ]
+            []
           ]
         },
         {
@@ -207,32 +205,63 @@
       ]
     },
     {
-      "rule_id": "CID-05",
-      "description": "Government-issued identifier",
+      "rule_id": "PII-05",
+      "description": "National Insurance number",
       "outcome": "Block until removed or approved",
       "mappings": [
         {
           "type": "field",
           "concept_groups": [
             [
-              "government_id"
+              "ni_number"
             ]
           ],
           "dataset_field_groups": [
-            []
+            [
+              "ni_number"
+            ]
           ]
         },
         {
           "type": "field",
           "concept_groups": [
             [
-              "government_id"
+              "ni_number"
             ]
           ],
           "dataset_field_groups": [
-            []
+            [
+              "ni_number"
+            ]
           ]
-        },
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-06",
+      "description": "Passport number",
+      "outcome": "Block until removed or approved",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "passport_number"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "passport_number"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "PII-07",
+      "description": "Driving licence number",
+      "outcome": "Block until removed or approved",
+      "mappings": [
         {
           "type": "field",
           "concept_groups": [
@@ -247,37 +276,8 @@
       ]
     },
     {
-      "rule_id": "CID-06",
-      "description": "Customer account number",
-      "outcome": "Block until removed or approved",
-      "mappings": [
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "account_number"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "account_number"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        }
-      ]
-    },
-    {
-      "rule_id": "CID-07",
-      "description": "Payment information",
+      "rule_id": "PII-08",
+      "description": "Bank account or payment card number",
       "outcome": "Block until removed or approved",
       "mappings": [
         {
@@ -297,31 +297,31 @@
           "type": "field",
           "concept_groups": [
             [
-              "credit_card_number"
+              "sort_code"
             ]
           ],
           "dataset_field_groups": [
-            [
-              "credit_card_number"
-            ]
+            []
           ]
         },
         {
           "type": "field",
           "concept_groups": [
             [
-              "payment_information"
+              "credit_card_number"
             ]
           ],
           "dataset_field_groups": [
-            []
+            [
+              "credit_card_number"
+            ]
           ]
         }
       ]
     },
     {
-      "rule_id": "CID-08",
-      "description": "Online or device identifier",
+      "rule_id": "PII-09",
+      "description": "Online identifier",
       "outcome": "Flag record",
       "mappings": [
         {
@@ -363,69 +363,46 @@
           "type": "field",
           "concept_groups": [
             [
-              "advertising_id"
+              "customer_id"
             ]
           ],
           "dataset_field_groups": [
-            []
+            [
+              "customer_id"
+            ]
           ]
         }
       ]
     },
     {
-      "rule_id": "RC-01",
-      "description": "Financial difficulty or vulnerability",
+      "rule_id": "SPII-01",
+      "description": "Health or medical information",
       "outcome": "Block record",
       "mappings": [
         {
           "type": "field",
           "concept_groups": [
             [
-              "financial_difficulty"
+              "medical_condition"
             ]
           ],
           "dataset_field_groups": [
-            []
+            [
+              "medical_condition"
+            ]
           ]
         },
         {
           "type": "field",
           "concept_groups": [
             [
-              "financial_difficulty"
+              "medical_condition"
             ]
           ],
           "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
             [
-              "financial_difficulty"
+              "medical_condition"
             ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        }
-      ]
-    },
-    {
-      "rule_id": "RC-02",
-      "description": "Health-related customer information",
-      "outcome": "Block record",
-      "mappings": [
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "medical_support"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
           ]
         },
         {
@@ -457,15 +434,127 @@
       ]
     },
     {
-      "rule_id": "RC-03",
-      "description": "Precise location history",
+      "rule_id": "SPII-02",
+      "description": "Ethnicity or racial origin",
       "outcome": "Block record",
       "mappings": [
         {
           "type": "field",
           "concept_groups": [
             [
-              "location_history"
+              "ethnicity"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "ethnicity"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "ethnicity"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "ethnicity"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "ethnicity"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "ethnicity"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-03",
+      "description": "Religion or belief",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "religion"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "religion"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "religion"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "religion"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-04",
+      "description": "Political opinion",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "political_view"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "political_view"
+            ]
+          ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "political_view"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "political_view"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "SPII-05",
+      "description": "Trade union membership",
+      "outcome": "Block record",
+      "mappings": [
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "union_member"
             ]
           ],
           "dataset_field_groups": [
@@ -476,18 +565,7 @@
           "type": "field",
           "concept_groups": [
             [
-              "location_history"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "location_history"
+              "trade_union"
             ]
           ],
           "dataset_field_groups": [
@@ -497,88 +575,8 @@
       ]
     },
     {
-      "rule_id": "RC-04",
-      "description": "Authentication or security secrets",
-      "outcome": "Block record",
-      "mappings": [
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "authentication_secret"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "authentication_secret"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "authentication_secret"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        }
-      ]
-    },
-    {
-      "rule_id": "RC-05",
-      "description": "Fraud investigation information",
-      "outcome": "Block record",
-      "mappings": [
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "fraud_investigation"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "fraud_investigation"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        },
-        {
-          "type": "field",
-          "concept_groups": [
-            [
-              "fraud_investigation"
-            ]
-          ],
-          "dataset_field_groups": [
-            []
-          ]
-        }
-      ]
-    },
-    {
-      "rule_id": "RC-06",
-      "description": "Biometric information",
+      "rule_id": "SPII-06",
+      "description": "Biometric or genetic data",
       "outcome": "Block record",
       "mappings": [
         {
@@ -613,54 +611,211 @@
           "dataset_field_groups": [
             []
           ]
+        },
+        {
+          "type": "field",
+          "concept_groups": [
+            [
+              "biometric"
+            ]
+          ],
+          "dataset_field_groups": [
+            []
+          ]
         }
       ]
     },
     {
-      "rule_id": "CCID-01",
+      "rule_id": "CPII-01",
       "description": "Full name + date of birth",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "dob"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "dob"
+            ]
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-02",
-      "description": "Full name + home address or postcode",
+      "rule_id": "CPII-02",
+      "description": "Full name + postal address or postcode",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "address"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "address"
+            ]
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-03",
-      "description": "Customer ID + account balance or transaction event",
+      "rule_id": "CPII-03",
+      "description": "Full name + phone number",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "phone"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "phone"
+            ]
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-04",
-      "description": "Email address + device ID",
+      "rule_id": "CPII-04",
+      "description": "Full name + personal email address",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "full_name"
+            ],
+            [
+              "email"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_name"
+            ],
+            [
+              "email"
+            ]
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-05",
+      "rule_id": "CPII-05",
       "description": "Date of birth + postcode + gender",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "dob"
+            ],
+            [
+              "postcode"
+            ],
+            [
+              "gender"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "dob"
+            ],
+            [],
+            [
+              "gender"
+            ]
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-06",
-      "description": "Customer ID + complaint or support case details",
+      "rule_id": "CPII-06",
+      "description": "Employee ID + department + role where linkable to a person",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "employee_id"
+            ],
+            [
+              "department"
+            ],
+            [
+              "role where linkable to a person"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "employee_id"
+            ],
+            [
+              "department"
+            ],
+            []
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-07",
-      "description": "Location history + timestamp + customer identifier",
+      "rule_id": "CPII-07",
+      "description": "Customer ID + account event details where the customer can be re-identified",
       "outcome": "Flag record",
-      "mappings": []
+      "mappings": [
+        {
+          "type": "combination",
+          "concept_groups": [
+            [
+              "customer_id"
+            ],
+            [
+              "account_event_details"
+            ]
+          ],
+          "dataset_field_groups": [
+            [
+              "customer_id"
+            ],
+            []
+          ]
+        }
+      ]
     },
     {
-      "rule_id": "CCID-08",
-      "description": "Free-text feedback containing customer identifiers or sensitive details",
+      "rule_id": "CPII-08",
+      "description": "Free-text comments containing personal identifiers",
       "outcome": "Flag record",
       "mappings": [
         {
