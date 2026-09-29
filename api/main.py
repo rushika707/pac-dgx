@@ -2,7 +2,7 @@ from pathlib import Path
 import sqlite3
 import json
 import math
-
+from database import init_db
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,7 +25,7 @@ DATASET_FILE = BASE / "generated_data" / "synthetic_data.xlsx"
 
 
 app = FastAPI(title="Policy-as-Code API")
-
+init_db()
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,7 +35,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+@app.on_event("startup")
+def startup():
+    init_db()
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
