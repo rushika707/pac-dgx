@@ -1,8 +1,11 @@
 import sqlite3
 from pathlib import Path
+import os
 
 BASE = Path(__file__).resolve().parent
-DB_PATH = BASE / "data" / "policy.db"
+DB_PATH = Path(
+    os.getenv("DB_PATH", str(BASE / "data" / "policy.db"))
+)
 
 
 def get_connection():
